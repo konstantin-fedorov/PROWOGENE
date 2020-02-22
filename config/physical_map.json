@@ -1,0 +1,156 @@
+{
+    "system": {
+        "search_depth": 10,
+        "thread_count": 0,
+        "extensions": {
+            "image": "bmp",
+            "model": "obj"
+        }
+    },
+    "general": {
+        "seed": 1234,
+        "size": 1024,
+        "chunk_size": 256
+    },
+    "names": {
+        "minimap": {
+            "texture": "physical_map"
+        }
+    },
+    "basis": {
+         "surface": "diamond_square",
+         "periodicity": 1,
+         "distortion": "linear",
+         "align": "random",
+         "key_point": "maximal",
+         "height": 0.35000
+    },
+    "cliff": {
+        "enabled": true,
+        "octaves": 4,
+        "levels": 8,
+        "seed": 4321,
+        "grain":  0.0325
+    },
+    "mountain": {
+        "count": 3,
+        "settings": [
+            {
+                "noises": 6,
+                "gradient": "linear",
+                "hillside": "sinusoidal",
+                "align": "center",
+                "height": 1.00000,
+                "size": 512,
+                "mouth": {
+                    "enabled": true,
+                    "width": 0.24,
+                    "depth": 0.4
+                }
+            },
+            {
+                "noises": 6,
+                "gradient": "linear",
+                "hillside": "sinusoidal",
+                "align": "random",
+                "height": 0.55000,
+                "size": 256,
+                "mouth": {
+                    "enabled": false,
+                    "width": 0.0,
+                    "depth": 0.0
+                }
+            },
+            {
+                "noises": 6,
+                "gradient": "linear",
+                "hillside": "sinusoidal",
+                "align": "random",
+                "height": 0.75000,
+                "size": 256,
+                "mouth": {
+                    "enabled": false,
+                    "width": 0.0,
+                    "depth": 0.0
+                }
+            }
+        ]
+    },
+    "water": {
+        "sea": {
+            "enabled": true,
+            "erosion": true,
+            "ratio": 0.1
+        },
+        "beach": {
+            "enabled": true,
+            "ratio": 0.05
+        }
+    },
+    "river": {
+        "count": 1,
+        "smooth_radius": 1,
+        "settings": [
+            {
+                "max_length_in_chunks": 5,
+                "max_head_height": 0.9500,
+                "distortion": 0.70000,
+                "channel": {
+                    "width": 8,
+                    "depth": 0.02500
+                }
+            }
+        ]
+    },
+    "post_process": {
+        "enabled": false
+    },
+    "location": {
+        "enabled": false
+    },
+    "item": {
+        "enabled": false
+    },
+    "texture": {
+        "heightmap_enabled": false,
+        "chunks_enabled": false,
+        "minimap": {
+            "enabled": true,
+            "tile_size": 256,
+            "clear_edges": true
+        },
+        "normals": {
+            "enabled": false
+        },
+        "gradient": {
+            "enabled": true,
+            "opacity": 1.0,
+            "points": [
+                "#2277eeff 0.0000",
+                "#2277eeff 0.0500",
+                "#5599eeff 0.0505",
+                "#5599eeff 0.0750",
+                "#88bbeeff 0.0755",
+                "#88bbeeff 0.1000",
+                "#eeeeaaff 0.1005",
+                "#eeeeaaff 0.1150",
+                "#aadd88ff 0.1155",
+                "#aadd88ff 0.1500",
+                "#66aa55ff 0.1505",
+                "#66aa55ff 0.2000",
+                "#448833ff 0.2005",
+                "#448833ff 0.2700",
+                "#337722ff 0.2705",
+                "#337722ff 0.3500",
+                "#ddcc77ff 0.3505",
+                "#ddcc77ff 0.5000",
+                "#cc8844ff 0.5005",
+                "#cc8844ff 0.7500",
+                "#995533ff 0.7505",
+                "#995533ff 1.0000"
+            ],
+            "only_minimap": true
+        },
+        "target_bitdepth": 24
+    }
+}

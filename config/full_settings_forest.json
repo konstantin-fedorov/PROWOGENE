@@ -1,0 +1,31 @@
+[
+    {
+        "id": 0,
+        "file": "../../data/3d/tree1.obj",
+        "count": {
+            "max": 3,
+            "min": 2
+        },
+        "angle": {
+            "max": 0,
+            "min": 0
+        },
+        "radius": 2.0,
+        "frequency": 0.75,
+        "leveled": false
+    }, {
+        "id": 1,
+        "file": "../../data/3d/tree2.obj",
+        "count": {
+            "max": -1,
+            "min": 0
+        },
+        "angle": {
+            "max": 0,
+            "min": 0
+        },
+        "radius": 1.0,
+        "frequency": 0.75,
+        "leveled": false
+    }
+]

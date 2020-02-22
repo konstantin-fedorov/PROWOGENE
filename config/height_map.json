@@ -1,0 +1,81 @@
+{
+    "system": {
+        "search_depth": 10,
+        "thread_count": 0,
+        "extensions": {
+            "image": "bmp",
+            "model": "obj"
+        }
+    },
+    "general": {
+        "seed": 123,
+        "size": 2048,
+        "chunk_size": 256
+    },
+    "names" : {
+        "heightmap": "height_map"
+    },
+    "basis": {
+         "surface": "diamond_square",
+         "periodicity": 1,
+         "distortion": "linear",
+         "align": "random",
+         "key_point": "maximal",
+         "height": 0.25000
+    },
+    "cliff": {
+        "enabled": true,
+        "octaves": 4,
+        "levels": 8,
+        "seed": 321,
+        "grain":  0.0325
+    },
+    "mountain": {
+        "count": 1,
+        "settings": [
+            {
+                "noises": 6,
+                "gradient": "linear",
+                "hillside": "sinusoidal",
+                "align": "center",
+                "height": 1.00000,
+                "size": 2048,
+                "mouth": {
+                    "enabled": true,
+                    "width": 0.3,
+                    "depth": 0.5
+                }
+            }
+        ]
+    },
+    "water": {
+        "sea": {
+            "enabled": true,
+            "erosion": true,
+            "ratio": 0.05
+        },
+        "beach": {
+            "enabled": true,
+            "ratio": 0.05
+        }
+    },
+    "river": {
+        "count": 1,
+        "smooth_radius": 1,
+        "settings": [
+            {
+                "max_length_in_chunks": 5,
+                "max_head_height": 0.9500,
+                "distortion": 0.70000,
+                "channel": {
+                    "width": 8,
+                    "depth": 0.02500
+                }
+            }
+        ]
+    },
+    "texture": {
+        "heightmap_enabled": true,
+        "target_bitdepth": 24
+    }
+}
