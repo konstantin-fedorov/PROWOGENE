@@ -190,7 +190,9 @@ bool TextureModule::ReadReferenceTextures() {
         }
 
         const auto& decal_list = std::get<2>(info[idx]);
-        const int decals_count = static_cast<int>(decal_list.size());
+        const int decals_count = settings_.texture.images.decals.enabled ?
+                                 static_cast<int>(decal_list.size()) :
+                                 0;
         decals.resize(decals_count);
         for (int j = 0; j < decals_count; ++j) {
             decals[j] = image_io_->Load(decal_list[j]);
