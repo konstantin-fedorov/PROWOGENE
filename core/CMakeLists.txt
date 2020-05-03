@@ -102,6 +102,7 @@ add_library(${PROJECT_NAME} STATIC
     ${BASE_HEADERS}    ${BASE_SOURCES}
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "PROWOGENE")
 target_include_directories(${PROJECT_NAME}
     PUBLIC
     "${PROJECT_SOURCE_DIR}"

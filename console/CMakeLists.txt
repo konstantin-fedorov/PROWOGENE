@@ -8,3 +8,4 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PUBLIC
     prowogene_core
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "PROWOGENE")
