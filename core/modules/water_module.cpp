@@ -8,12 +8,6 @@ namespace modules {
 using utils::Array2D;
 using AT = utils::Array2DTools;
 
-void WaterModule::SetStorage(Storage* storage) {
-    LinkData(height_map_,  storage, kStorageHeightMap);
-    LinkData(sea_level_,   storage, kStorageSeaLevel);
-    LinkData(beach_level_, storage, kStorageBeachLevel);
-}
-
 bool WaterModule::Process() {
     const float sea_ratio = settings_.water.sea.ratio;
     const int search_depth = settings_.system.search_depth;
@@ -37,14 +31,6 @@ bool WaterModule::Process() {
     }
 
     return true;
-}
-
-std::list<std::string> WaterModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageSeaLevel,
-        kStorageBeachLevel
-    };
 }
 
 std::list<std::string> WaterModule::GetNeededSettings() const {

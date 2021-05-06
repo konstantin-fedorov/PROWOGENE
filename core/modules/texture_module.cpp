@@ -34,15 +34,6 @@ using TC = utils::TypesConverter;
 
 static const int kAlphaBandAccuracy = 4096;
 
-void TextureModule::SetStorage(Storage* storage) {
-    LinkData(height_map_,    storage, kStorageHeightMap);
-    LinkData(river_mask_,    storage, kStorageRiverMask);
-    LinkData(mountain_mask_, storage, kStorageMountainMask);
-    LinkData(sea_level_,     storage, kStorageSeaLevel);
-    LinkData(beach_level_,   storage, kStorageBeachLevel);
-    LinkData(image_io_,      storage, kStorageImageIO);
-}
-
 bool TextureModule::Process() {
     const int size = settings_.general.size;
     const int chunk_size = settings_.general.chunk_size;
@@ -124,17 +115,6 @@ void TextureModule::Deinit() {
     reference_textures_heights_.clear();
     reference_decals_.clear();
     minimap_.Clear();
-}
-
-std::list<std::string> TextureModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageRiverMask,
-        kStorageMountainMask,
-        kStorageSeaLevel,
-        kStorageBeachLevel,
-        kStorageImageIO
-    };
 }
 
 list<string> TextureModule::GetNeededSettings() const {

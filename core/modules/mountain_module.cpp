@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "utils/array2d_tools.h"
+#include "utils/random.h"
 
 namespace prowogene {
 namespace modules {
@@ -13,12 +14,6 @@ using std::string;
 using utils::Array2D;
 using utils::Random;
 using AT = utils::Array2DTools;
-
-void MountainModule::SetStorage(Storage* storage) {
-    LinkData(height_map_,    storage, kStorageHeightMap);
-    LinkData(mountain_mask_, storage, kStorageMountainMask);
-    LinkData(location_map_,  storage, kStorageLocationMap);
-}
 
 bool MountainModule::Process() {
     if (settings_.mountain.count < 1) {
@@ -55,14 +50,6 @@ bool MountainModule::Process() {
     MarkMountains(ridge);
 
     return true;
-}
-
-list<string> MountainModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageMountainMask,
-        kStorageLocationMap
-    };
 }
 
 list<string> MountainModule::GetNeededSettings() const {

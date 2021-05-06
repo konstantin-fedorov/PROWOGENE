@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "utils/array2d_tools.h"
+#include "utils/random.h"
 
 namespace prowogene {
 namespace modules {
@@ -17,15 +18,6 @@ using utils::ImageIOParams;
 using utils::Random;
 using utils::RgbaPixel;
 using AT = utils::Array2DTools;
-
-void LocationModule::SetStorage(Storage* storage) {
-    LinkData(height_map_,   storage, kStorageHeightMap);
-    LinkData(river_mask_,   storage, kStorageRiverMask);
-    LinkData(location_map_, storage, kStorageLocationMap);
-    LinkData(sea_level_,    storage, kStorageSeaLevel);
-    LinkData(beach_level_,  storage, kStorageBeachLevel);
-    LinkData(image_io_,     storage, kStorageImageIO);
-}
 
 bool LocationModule::Process() {
     if (!settings_.location.enabled) {
@@ -47,17 +39,6 @@ bool LocationModule::Process() {
     }
 
     return true;
-}
-
-list<string> LocationModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageRiverMask,
-        kStorageLocationMap,
-        kStorageSeaLevel,
-        kStorageBeachLevel,
-        kStorageImageIO
-    };
 }
 
 list<string> LocationModule::GetNeededSettings() const {

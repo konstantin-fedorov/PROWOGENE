@@ -41,12 +41,8 @@ struct CliffSettings : ISettings {
 Creates cliffs at some levels and adds them to height map. */
 class CliffModule : public IModule {
  public:
-    /** @copydoc IModule::SetStorage */
-    void SetStorage(Storage* storage) override;
     /** @copydoc IModule::Process */
     bool Process() override;
-    /** @copydoc IModule::GetNeededData */
-    std::list<std::string> GetNeededData() const override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */
@@ -54,9 +50,11 @@ class CliffModule : public IModule {
     /** @copydoc IModule::GetName */
     std::string GetName() const override;
 
- protected:
+ public:
     /** Height map from data storage. */
     utils::Array2D<float>* height_map_ = nullptr;
+    
+ protected:
     /** Settings for module. */
     struct {
         /** Basis settings. */

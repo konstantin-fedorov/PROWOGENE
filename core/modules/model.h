@@ -49,12 +49,8 @@ struct ModelSettings : ISettings {
 Creates models for heightmap and links textures to them (if any). */
 class ModelModule : public IModule {
  public:
-    /** @copydoc IModule::SetStorage */
-    void SetStorage(Storage* storage) override;
     /** @copydoc IModule::Process */
     bool Process() override;
-    /** @copydoc IModule::GetNeededData */
-    std::list<std::string> GetNeededData() const override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */
@@ -100,11 +96,13 @@ class ModelModule : public IModule {
     static void FillTris(const std::vector<int>& face,
                          utils::VertexGroup (&group)[3]);
 
+ public:
     /** Height map from data storage. */
     utils::Array2D<float>* height_map_ = nullptr;
     /** 3D model input/output worker from data storage. */
     utils::ModelIO*        model_io_ = nullptr;
 
+ protected:
     /** Settings for module. */
     struct {
         /** General settings. */

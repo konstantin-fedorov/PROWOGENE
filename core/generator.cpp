@@ -3,6 +3,8 @@
 #include <chrono>
 #include <fstream>
 
+#include "utils/array2d.h"
+
 namespace prowogene {
 
 using std::list;
@@ -55,11 +57,6 @@ void Generator::Clear() {
     }
     modules_.clear();
 
-    if (storage_) {
-        delete storage_;
-        storage_ = nullptr;
-    }
-
     if (logger_) {
         delete logger_;
         logger_ = nullptr;
@@ -69,10 +66,6 @@ void Generator::Clear() {
 void Generator::SetLogger(Logger* logger) {
     if (logger)
         logger_ = logger;
-}
-
-void Generator::SetStorage(prowogene::Storage* storage) {
-    storage_ = storage;
 }
 
 void Generator::PushBackModule(IModule* module) {
@@ -145,9 +138,6 @@ bool Generator::Generate() {
             return false;
         }
         module->Init();
-        if (!ApplyData(module)) {
-            return false;
-        }
         bool success = module->Process();
         if (!success) {
             logger_->LogError(module);
@@ -177,19 +167,6 @@ bool Generator::ApplySettings(IModule* module) {
         }
         module->ApplySettings(needed->second);
     }
-    return true;
-}
-
-bool Generator::ApplyData(IModule* module) {
-    const list<string> data_keys = module->GetNeededData();
-    for (const string& key : data_keys) {
-        if (!storage_->GetData<void*>(key)) {
-            const string msg = "No data with key '" + key + "'.";
-            logger_->LogError(module, msg);
-            return false;
-        }
-    }
-    module->SetStorage(storage_);
     return true;
 }
 

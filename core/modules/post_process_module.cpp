@@ -1,6 +1,7 @@
 #include "post_process.h"
 
-#include <math.h>
+#include <cmath>
+#include <algorithm>
 
 #include "utils/array2d_tools.h"
 
@@ -11,10 +12,6 @@ using std::list;
 using std::string;
 using utils::Array2D;
 using AT = utils::Array2DTools;
-
-void PostProcessModule::SetStorage(Storage* storage) {
-    LinkData(height_map_, storage, kStorageHeightMap);
-}
 
 bool PostProcessModule::Process() {
     if (!settings_.postprocess.enabled) {
@@ -37,12 +34,6 @@ bool PostProcessModule::Process() {
         elem = std::min(level_top, std::max(level_bottom, elem));
     }
     return true;
-}
-
-list<string> PostProcessModule::GetNeededData() const {
-    return {
-        kStorageHeightMap
-    };
 }
 
 list<string> PostProcessModule::GetNeededSettings() const {

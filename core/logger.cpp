@@ -92,10 +92,9 @@ void Logger::DrawPipeline(const list<IModule*>& modules) {
     for (auto& module : modules) {
         if (module) {
             const auto settings = module->GetNeededSettings();
-            const auto data =     module->GetNeededData();
 
             string message = "";
-            message.reserve((settings.size() + data.size() + 10) * (kDrawWidth + 1));
+            message.reserve((settings.size() + 10) * (kDrawWidth + 1));
             message += hor_line;
             message += empty_line;
             message += CreateMessageLine("Module: " + module->GetName());
@@ -106,9 +105,6 @@ void Logger::DrawPipeline(const list<IModule*>& modules) {
             }
             message += empty_line;
             message += data_line;
-            for (const auto& item : data) {
-                message += CreateMessageLine("* " + item);
-            }
             message += empty_line;
             message += hor_line;
             if (module != modules.back()) {

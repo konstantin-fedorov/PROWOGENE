@@ -14,11 +14,6 @@ using utils::Vector3D;
 using utils::Range;
 using utils::VertexGroup;
 
-void ModelModule::SetStorage(Storage* storage) {
-    LinkData(height_map_, storage, kStorageHeightMap);
-    LinkData(model_io_,   storage, kStorageModelIO);
-}
-
 bool ModelModule::Process() {
     const bool chunks_enabled = settings_.model.chunks_enabled;
     const bool complex_enabled = settings_.model.complex_enabled;
@@ -83,13 +78,6 @@ bool ModelModule::Process() {
         }
     }
     return true;
-}
-
-list<string> ModelModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageModelIO
-    };
 }
 
 list<string> ModelModule::GetNeededSettings() const {

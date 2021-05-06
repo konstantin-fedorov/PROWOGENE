@@ -5,6 +5,7 @@
 #include "system_settings.h"
 #include "modules/basis.h"
 #include "utils/image_io.h"
+#include "utils/random.h"
 
 namespace prowogene {
 namespace modules {
@@ -137,12 +138,8 @@ class TextureModule : public IModule {
  public:
     /** @copydoc IModule::Deinit. */
     virtual void Deinit();
-    /** @copydoc IModule::SetStorage */
-    void SetStorage(Storage* storage) override;
     /** @copydoc IModule::Process */
     bool Process() override;
-    /** @copydoc IModule::GetNeededData */
-    std::list<std::string> GetNeededData() const override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */
@@ -363,6 +360,7 @@ class TextureModule : public IModule {
     /** Minimap image. */
     utils::Image                            minimap_;
 
+ public:
     /** Height map from data storage. */
     utils::Array2D<float>* height_map_ = nullptr;
     /** River mask from data storage. */
@@ -376,6 +374,7 @@ class TextureModule : public IModule {
     /** Image input/output worker from data storage. */
     utils::ImageIO*        image_io_ = nullptr;
 
+ protected:
     /** Settings for module. */
     struct {
         /** Basis settings. */

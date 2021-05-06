@@ -5,7 +5,6 @@
 #include <string>
 
 #include "settings_interface.h"
-#include "storage.h"
 
 namespace prowogene {
 
@@ -21,18 +20,10 @@ class IModule {
     /** Deinitialize own module values. */
     virtual void Deinit() {};
 
-    /** Attach needed data from storage.
-    @param [in] storage - Instance that has access to neeeded data. */
-    virtual void SetStorage(Storage* storage) = 0;
-
     /** Launch generation step
     @return @c true is step completed successfully, @c false when errors
             occurs during processing. */
     virtual bool Process() = 0;
-
-    /** Get needed data keys of data which be attached from storage.
-    @return List of data keys. */
-    virtual std::list<std::string> GetNeededData() const = 0;
 
     /** Get needed settings keys that need to be attached.
     @return List of settings keys. */
@@ -66,17 +57,6 @@ class IModule {
             }
         }
     }
-
-    /** Add pointer to transferable data to local storage.
-    @param [out] dst - Destination of copying data pointer.
-    @param [in]  storage - Instance that has access to neeeded data.
-    @param [in]  key - Transferable data key.
-    */
-    template<typename T>
-    static void LinkData(T*& dst, Storage* s, const std::string& key) {
-        dst = s->GetData<T>(key);
-    }
-
 
     /** Status text. */
     std::string status_ = "Success.";

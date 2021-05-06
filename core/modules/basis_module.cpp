@@ -8,10 +8,6 @@ namespace modules {
 using utils::Array2D;
 using AT = utils::Array2DTools;
 
-void BasisModule::SetStorage(Storage* storage) {
-    LinkData(height_map_, storage, kStorageHeightMap);
-}
-
 bool BasisModule::Process() {
     const int size = settings_.general.size;
     if (height_map_->Width() != size || height_map_->Height() != size) {
@@ -28,12 +24,6 @@ bool BasisModule::Process() {
     AT::SetAlign(*height_map_, basis.key_point, basis.align);
 
     return true;
-}
-
-std::list<std::string> BasisModule::GetNeededData() const {
-    return {
-        kStorageHeightMap
-    };
 }
 
 std::list<std::string> BasisModule::GetNeededSettings() const {

@@ -85,26 +85,51 @@ int main(int argc, const char *argv[]) {
     ItemSettings        item_settings;
     ModelSettings       model_settings;
 
-    // Data storage inctance.
-    Storage storage;
+    // Create and store all needed data to access from any other module.
+    Array2D<float>    height_map;
+    Array2D<Location> location_map;
+    Array2D<float>    mountain_mask;
+    float             beach_level = 0;
+    float             sea_level   = 0;
+    Array2D<float>    river_mask;
+    ImageIO           image_io;
+    ModelIO           model_io;
 
-    // Storage can hold any data type and allows to get it by std::string key.
-    storage.AddData(kStorageBeachLevel,   new float(0.0f));
-    storage.AddData(kStorageHeightMap,    new Array2D<float>());
-    storage.AddData(kStorageLocationMap,  new Array2D<Location>());
-    storage.AddData(kStorageMountainMask, new Array2D<float>());
-    storage.AddData(kStorageRiverMask,    new Array2D<float>());
-    storage.AddData(kStorageSeaLevel,     new float(0.0f));
-    storage.AddData(kStorageModelIO,      new ModelIO());
-    storage.AddData(kStorageImageIO,      new ImageIO());
+    // Link data to modules.
+    basis_module.height_map_        = &height_map;
+    mountain_module.height_map_     = &height_map;
+    mountain_module.location_map_   = &location_map;
+    mountain_module.mountain_mask_  = &mountain_mask;
+    cliff_module.height_map_        = &height_map;
+    water_module.height_map_        = &height_map;
+    water_module.beach_level_       = &beach_level;
+    water_module.sea_level_         = &sea_level;
+    river_module.height_map_        = &height_map;
+    river_module.river_mask_        = &river_mask;
+    river_module.sea_level_         = &sea_level;
+    post_process_module.height_map_ = &height_map;
+    locatoin_module.height_map_     = &height_map;
+    locatoin_module.river_mask_     = &river_mask;
+    locatoin_module.sea_level_      = &sea_level;
+    locatoin_module.beach_level_    = &beach_level;
+    locatoin_module.location_map_   = &location_map;
+    locatoin_module.image_io_       = &image_io;
+    item_module.height_map_         = &height_map;
+    item_module.location_map_       = &location_map;
+    item_module.sea_level_          = &sea_level;
+    texture_module.height_map_      = &height_map;
+    texture_module.river_mask_      = &river_mask;
+    texture_module.sea_level_       = &sea_level;
+    texture_module.beach_level_     = &beach_level;
+    texture_module.mountain_mask_   = &mountain_mask;
+    texture_module.image_io_        = &image_io;
+    model_module.height_map_        = &height_map;
+    model_module.model_io_          = &model_io;
 
     // Generator instance allows to manage modules, settings and storage.
     Generator generator;
 
     // Now any data can be attached to generator.
-
-    // There is single storage in generator.
-    generator.SetStorage(&storage);
 
     // Logger can be also attached to generator.
     Logger logger(LogLevel::Standard, LogLevel::Full, "log.txt");
@@ -147,16 +172,6 @@ int main(int argc, const char *argv[]) {
 
     // Launch generator pipeline.
     bool success = generator.Generate();
-
-    // Free data from storage manually.
-    storage.RemoveData<float>(kStorageBeachLevel);
-    storage.RemoveData<Array2D<float> >(kStorageHeightMap);
-    storage.RemoveData<Array2D<Location> >(kStorageLocationMap);
-    storage.RemoveData<Array2D<float> >(kStorageMountainMask);
-    storage.RemoveData<Array2D<float> >(kStorageRiverMask);
-    storage.RemoveData<float>(kStorageSeaLevel);
-    storage.RemoveData<ModelIO>(kStorageModelIO);
-    storage.RemoveData<ImageIO>(kStorageImageIO);
 
     return !success;
 }

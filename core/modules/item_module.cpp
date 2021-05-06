@@ -17,12 +17,6 @@ using utils::JsonValue;
 using AT = utils::Array2DTools;
 using TC = utils::TypesConverter;
 
-void ItemModule::SetStorage(Storage* storage) {
-    LinkData(height_map_,   storage, kStorageHeightMap);
-    LinkData(location_map_, storage, kStorageLocationMap);
-    LinkData(sea_level_,    storage, kStorageSeaLevel);
-}
-
 void ItemModule::Init() {
     const int size = settings_.general.size;
     object_mask_.Resize(size, size);
@@ -57,14 +51,6 @@ bool ItemModule::Process() {
     config.Save(settings_.item.config.file, settings_.item.config.pretty);
 
     return true;
-}
-
-list<string> ItemModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageLocationMap,
-        kStorageSeaLevel
-    };
 }
 
 list<string> ItemModule::GetNeededSettings() const {

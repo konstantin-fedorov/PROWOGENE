@@ -4,7 +4,6 @@
 #include "logger.h"
 #include "module_interface.h"
 #include "settings_interface.h"
-#include "storage.h"
 
 namespace prowogene {
 
@@ -23,11 +22,6 @@ class Generator {
     /** Attach entity for log results.
     @param [in] logger - Instance that will be used for logging. */
     void SetLogger(Logger* logger);
-
-    /** Attach entity for data storage.
-    @param [in] storage - Instance that will store transferable data
-    for modules. */
-    void SetStorage(Storage* storage);
 
     /** Add module to the end of pipeline.
     @param [in] storage - Module instance that will be pushed to the end of
@@ -70,18 +64,11 @@ class Generator {
             needed to module wasn't attached to generator. */
     virtual bool ApplySettings(IModule* module);
 
-    /** Apply all needed data to module.
-    @param [in] module - Module that needs data attach.
-    @return @c true' if all data were added, @c false if some data needed to
-            module wasn't attached to generator. */
-    virtual bool ApplyData(IModule* module);
 
     /** Instance for logging. */
     Logger*                           logger_ = nullptr;
     /** Settings with access by them names. */
     std::map<std::string, ISettings*> settings_;
-    /** Instance for transferable data storage. */
-    Storage*                          storage_ = nullptr;
     /** Generator's modules pipeline. */
     std::list<IModule*>               modules_;
 };

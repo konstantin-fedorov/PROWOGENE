@@ -5,6 +5,7 @@
 #include "module_interface.h"
 #include "system_settings.h"
 #include "types.h"
+#include "utils/array2d.h"
 
 namespace prowogene {
 namespace modules {
@@ -42,12 +43,8 @@ struct BasisSettings : ISettings {
 Creates basis surface without any high quality details or structures. */
 class BasisModule : public IModule {
  public:
-    /** @copydoc IModule::SetStorage */
-    void SetStorage(Storage* storage) override;
     /** @copydoc IModule::Process */
     bool Process() override;
-    /** @copydoc IModule::GetNeededData */
-    std::list<std::string> GetNeededData() const override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */
@@ -55,9 +52,11 @@ class BasisModule : public IModule {
     /** @copydoc IModule::GetName */
     std::string GetName() const override;
 
- protected:
+public:
     /** Height map from data storage. */
     utils::Array2D<float>* height_map_ = nullptr;
+
+ protected:
     /** Settings for module. */
     struct {
         /** Basis settings. */

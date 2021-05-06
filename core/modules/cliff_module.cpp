@@ -13,10 +13,6 @@ using std::string;
 using utils::Array2D;
 using AT = utils::Array2DTools;
 
-void CliffModule::SetStorage(Storage* storage) {
-    LinkData(height_map_, storage, kStorageHeightMap);
-}
-
 bool CliffModule::Process() {
     const int size = settings_.general.size;
     const int octaves_count = settings_.cliff.octaves;
@@ -53,12 +49,6 @@ bool CliffModule::Process() {
         threads);
 
     return true;
-}
-
-list<string> CliffModule::GetNeededData() const {
-    return {
-        kStorageHeightMap
-    };
 }
 
 list<string> CliffModule::GetNeededSettings() const {

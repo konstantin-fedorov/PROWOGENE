@@ -38,12 +38,6 @@ void RiverModule::Deinit() {
     last_points_.clear();
 }
 
-void RiverModule::SetStorage(Storage* storage) {
-    LinkData(height_map_,    storage, kStorageHeightMap);
-    LinkData(river_mask_,    storage, kStorageRiverMask);
-    LinkData(sea_level_,     storage, kStorageSeaLevel);
-}
-
 bool RiverModule::Process() {
     if (!settings_.river.count) {
         return true;
@@ -72,14 +66,6 @@ bool RiverModule::Process() {
     AT::ToRange(*height_map_, 0.0f, 1.0f, threads);
 
     return true;
-}
-
-std::list<std::string> RiverModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageRiverMask,
-        kStorageSeaLevel
-    };
 }
 
 list<string> RiverModule::GetNeededSettings() const {

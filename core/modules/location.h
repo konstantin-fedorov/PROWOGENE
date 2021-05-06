@@ -57,12 +57,8 @@ struct LocationSettings : ISettings {
 Marks locations according to height map, marks forest, glade add rivers. */
 class LocationModule : public IModule {
  public:
-    /** @copydoc IModule::SetStorage */
-    void SetStorage(Storage* storage) override;
     /** @copydoc IModule::Process */
     bool Process() override;
-    /** @copydoc IModule::GetNeededData */
-    std::list<std::string> GetNeededData() const override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */
@@ -92,7 +88,7 @@ class LocationModule : public IModule {
     virtual float GetForestLevel(const utils::Array2D<float>& table,
                                  float ratio);
 
-
+ public:
     /** Height map from data storage. */
     utils::Array2D<float>*    height_map_ = nullptr;
     /** River mask from data storage. */
@@ -105,6 +101,8 @@ class LocationModule : public IModule {
     utils::Array2D<Location>* location_map_ = nullptr;
     /** Image input/output worker from data storage. */
     utils::ImageIO*           image_io_ = nullptr;
+
+ protected:
     /** Settings for module. */
     struct {
         /** Basis settings. */

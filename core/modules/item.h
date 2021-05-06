@@ -224,14 +224,10 @@ struct ItemSettings : ISettings {
 Places external items on the map according to their settings. */
 class ItemModule : public IModule {
  public:
-    /** @copydoc IModule::SetStorage */
-    void SetStorage(Storage* storage) override;
     /** @copydoc IModule::Init */
     void Init() override;
     /** @copydoc IModule::Process */
     bool Process() override;
-    /** @copydoc IModule::GetNeededData */
-    std::list<std::string> GetNeededData() const override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */
@@ -314,6 +310,7 @@ class ItemModule : public IModule {
     /** List of placed ofjects for all world. */
     std::list<ExportItemSettings> placed_objects_;
 
+ public:
     /** Height map from data storage. */
     utils::Array2D<float>*    height_map_ = nullptr;
     /** Location map from data storage. */
@@ -321,6 +318,7 @@ class ItemModule : public IModule {
     /** Sea level from data storage. */
     float*                    sea_level_ = nullptr;
 
+ protected:
     /** Settings for module. */
     struct {
         /** Item settings. */

@@ -70,12 +70,8 @@ struct MountainSettings : ISettings {
 Creates mountains and places them on heightmap. Also marks their locations. */
 class MountainModule : public IModule {
  public:
-    /** @copydoc IModule::SetStorage */
-    void SetStorage(Storage* storage) override;
     /** @copydoc IModule::Process */
     bool Process() override;
-    /** @copydoc IModule::GetNeededData */
-    std::list<std::string> GetNeededData() const override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */
@@ -108,13 +104,15 @@ class MountainModule : public IModule {
     @param [in] ridge - Combined height map for all mountains. */
     virtual void MarkMountains(const utils::Array2D<float>& ridge);
 
-
+ public:
     /** Height map from data storage. */
     utils::Array2D<float>*    height_map_ = nullptr;
     /** Location map from data storage. */
     utils::Array2D<Location>* location_map_ = nullptr;
     /** Mountain mask from data storage. */
     utils::Array2D<float>*    mountain_mask_ = nullptr;
+
+ private:
     /** Settings for module. */
     struct {
         /** Basis settings. */

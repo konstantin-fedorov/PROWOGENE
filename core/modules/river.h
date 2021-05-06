@@ -4,6 +4,8 @@
 #include "general_settings.h"
 #include "system_settings.h"
 #include "module_interface.h"
+#include "utils/array2d.h"
+#include "utils/random.h"
 #include "types.h"
 
 namespace prowogene {
@@ -70,12 +72,8 @@ class RiverModule : public IModule {
     void Init() override;
     /** @copydoc IModule::Deinit */
     void Deinit() override;
-    /** @copydoc IModule::SetStorage */
-    void SetStorage(Storage* storage) override;
     /** @copydoc IModule::Process */
     bool Process() override;
-    /** @copydoc IModule::GetNeededData */
-    std::list<std::string> GetNeededData() const override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */
@@ -167,12 +165,15 @@ class RiverModule : public IModule {
     /** Possible river's last points. */
     std::vector<Point<float> >    last_points_;
 
+ public:
     /** Height map mask from data storage. */
     utils::Array2D<float>* height_map_ = nullptr;
     /** River mask from data storage. */
     utils::Array2D<float>* river_mask_ = nullptr;
     /** Sea level mask from data storage. */
     float*                 sea_level_ = nullptr;
+
+ protected:
     /** Settings for module. */
     struct {
         /** General settings. */
