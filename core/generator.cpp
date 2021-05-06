@@ -13,6 +13,33 @@ using utils::JsonObject;
 using utils::JsonType;
 using utils::InputString;
 
+
+// Singleton dummy logger which don't do anything.
+class DummyLogger : public Logger {
+public:
+    DummyLogger(DummyLogger& other) = delete;
+    void operator=(const DummyLogger&) = delete;
+
+    static DummyLogger* GetInstance() {
+        if (!instance_) {
+            instance_ = new DummyLogger();
+        }
+        return instance_;
+    }
+
+protected:
+    static DummyLogger* instance_;
+
+    DummyLogger() { };
+    void Log(const std::list<LogLevel>& levels, const std::string& msg) override { }
+};
+DummyLogger* DummyLogger::instance_ = nullptr;
+
+
+prowogene::Generator::Generator() {
+    logger_ = DummyLogger::GetInstance();
+}
+
 void Generator::Clear() {
     for (auto& settings : settings_) {
         if (settings.second) {
@@ -40,7 +67,8 @@ void Generator::Clear() {
 }
 
 void Generator::SetLogger(Logger* logger) {
-    logger_ = logger;
+    if (logger)
+        logger_ = logger;
 }
 
 void Generator::SetStorage(prowogene::Storage* storage) {
@@ -96,9 +124,7 @@ bool Generator::IsCorrect() const {
 }
 
 bool Generator::Generate() {
-    if (logger_) {
-        logger_->DrawPipeline(modules_);
-    }
+    logger_->DrawPipeline(modules_);
 
     if (!IsCorrect()) {
         return false;
@@ -113,9 +139,7 @@ bool Generator::Generate() {
             return false;
         }
 
-        if (logger_) {
-            logger_->ModuleStarted(module);
-        }
+        logger_->ModuleStarted(module);
 
         if (!ApplySettings(module)) {
             return false;
@@ -126,17 +150,13 @@ bool Generator::Generate() {
         }
         bool success = module->Process();
         if (!success) {
-            if (logger_) {
-                logger_->LogError(module);
-            }
+            logger_->LogError(module);
             module->Deinit();
             return false;
         }
         module->Deinit();
 
-        if (logger_) {
-            logger_->ModuleEnded(module);
-        }
+        logger_->ModuleEnded(module);
     }
 
     logger_->LogMessage("Generation ended.");
@@ -164,10 +184,8 @@ bool Generator::ApplyData(IModule* module) {
     const list<string> data_keys = module->GetNeededData();
     for (const string& key : data_keys) {
         if (!storage_->GetData<void*>(key)) {
-            if (logger_) {
-                const string msg = "No data with key '" + key + "'.";
-                logger_->LogError(module, msg);
-            }
+            const string msg = "No data with key '" + key + "'.";
+            logger_->LogError(module, msg);
             return false;
         }
     }

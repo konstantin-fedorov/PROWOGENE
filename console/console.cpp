@@ -108,7 +108,7 @@ int main(int argc, const char *argv[]) {
 
     // Logger can be also attached to generator.
     Logger logger(LogLevel::Standard, LogLevel::Full, "log.txt");
-    generator.SetLogger(&logger);
+    generator.SetLogger(nullptr);// &logger);
 
     // There is unlimited count of modules that can be attached to generator's
     // pipeline. Order of addition is significant and describes steps order.

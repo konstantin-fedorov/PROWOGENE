@@ -71,7 +71,7 @@ class Logger {
     /** Log message to specified outputs that supports selected levels.
     @param [in] levels - Levels in which message must be logged.
     @param [in] msg    - Message text. */
-    void Log(const std::list<LogLevel>& levels, const std::string& msg);
+    virtual void Log(const std::list<LogLevel>& levels, const std::string& msg);
 
     /** Create text line inside pipeline node.
     @param [in] msg - Message text. */

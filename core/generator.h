@@ -14,6 +14,9 @@ That class allows building pipeline of modules, attaching settings, logging
 process and launch pipeline with checks during runtime. */
 class Generator {
  public:
+    /** Constructor. */
+    Generator();
+
     /** Delete all entities attached to generator and clear state. */
     void Clear();
 
