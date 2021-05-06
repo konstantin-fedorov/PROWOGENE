@@ -44,8 +44,8 @@ prowogene::Generator::Generator() {
 
 void Generator::Clear() {
     for (auto& settings : settings_) {
-        if (settings.second) {
-            delete settings.second;
+        if (settings.second.settings) {
+            delete settings.second.settings;
         }
     }
     settings_.clear();
@@ -73,7 +73,8 @@ void Generator::PushBackModule(IModule* module) {
 }
 
 void Generator::AddSettings(ISettings* settings) {
-    settings_[settings->GetName()] = settings;
+    settings_[settings->GetName()] = { settings, false };
+
 }
 
 void Generator::LoadSettings(const string& filename) {
@@ -87,7 +88,7 @@ void Generator::LoadSettings(const string& filename) {
     for (auto& sub_config : config) {
         auto founded = settings_.find(sub_config.first);
         if (founded != settings_.end()) {
-            founded->second->Deserialize(sub_config.second);
+            founded->second.settings->Deserialize(sub_config.second);
         }
     }
 }
@@ -95,7 +96,7 @@ void Generator::LoadSettings(const string& filename) {
 void Generator::SaveSettings(const string& filename, bool pretty) const {
     JsonObject config;
     for (auto& settings : settings_) {
-        config[settings.first] = settings.second->Serialize();
+        config[settings.first] = settings.second.settings->Serialize();
     }
     JsonValue json_file = config;
     string str = json_file.ToString();
@@ -105,23 +106,8 @@ void Generator::SaveSettings(const string& filename, bool pretty) const {
     }
 }
 
-bool Generator::IsCorrect() const {
-    for (const auto& s : settings_) {
-        if (!s.second->IsCorrect()) {
-            const string msg = "Incorrect settings : '" + s.first + "'.";
-            logger_->LogError(nullptr, msg);
-            return false;
-        }
-    }
-    return true;
-}
-
 bool Generator::Generate() {
     logger_->DrawPipeline(modules_);
-
-    if (!IsCorrect()) {
-        return false;
-    }
 
     logger_->LogMessage("Generation started.");
     auto time_beg = std::chrono::high_resolution_clock::now();
@@ -165,7 +151,18 @@ bool Generator::ApplySettings(IModule* module) {
             logger_->LogError(module, msg);
             return false;
         }
-        module->ApplySettings(needed->second);
+        LazySettingsCheck& settings_to_check = needed->second;
+        ISettings* set = settings_to_check.settings;
+        if (!settings_to_check.was_checked) {
+            const bool success = settings_to_check.settings->IsCorrect();
+            if (!success) {
+                const string msg = "Settings '" + set->GetName() + "' are incorrect.";
+                logger_->LogError(module, msg);
+                return false;
+            }
+        }
+        settings_to_check.was_checked = true;
+        module->ApplySettings(set);
     }
     return true;
 }

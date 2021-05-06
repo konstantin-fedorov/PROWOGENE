@@ -7,6 +7,12 @@
 
 namespace prowogene {
 
+/** Helper struct to prevent 2nd checking on already cheecked data. */
+struct LazySettingsCheck {
+    ISettings* settings;
+    bool       was_checked;
+};
+
 /** @brief Class that allow pipeline configuration and launch.
 
 That class allows building pipeline of modules, attaching settings, logging
@@ -47,10 +53,6 @@ class Generator {
                            space. */
     void SaveSettings(const std::string& filename, bool pretty = true) const;
 
-    /** Check all added settings for correctness.
-    @return @c true if all settings are correct, @c false otherwise. */
-    bool IsCorrect() const;
-
     /** Run pipeline with modules, processing them one by one in addition 
     order.
     @return @c true if generation completed successfilly, @c false if errors
@@ -66,11 +68,12 @@ class Generator {
 
 
     /** Instance for logging. */
-    Logger*                           logger_ = nullptr;
-    /** Settings with access by them names. */
-    std::map<std::string, ISettings*> settings_;
+    Logger*                                  logger_ = nullptr;
+    /** Information about settings and stored flag about execution of
+    IsCorrect was already completed. Access by names. */
+    std::map<std::string, LazySettingsCheck> settings_;
     /** Generator's modules pipeline. */
-    std::list<IModule*>               modules_;
+    std::list<IModule*>                      modules_;
 };
 
 } // namespace prowogene
