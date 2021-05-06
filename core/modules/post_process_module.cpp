@@ -38,8 +38,8 @@ bool PostProcessModule::Process() {
 
 list<string> PostProcessModule::GetNeededSettings() const {
     return {
-        kConfigPostProcess,
-        kConfigSystem
+        settings_.system.GetName(),
+        settings_.postprocess.GetName()
     };
 }
 

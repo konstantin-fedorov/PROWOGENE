@@ -35,8 +35,8 @@ bool WaterModule::Process() {
 
 std::list<std::string> WaterModule::GetNeededSettings() const {
     return {
-        kConfigSystem,
-        kConfigWater
+        settings_.system.GetName(),
+        settings_.water.GetName()
     };
 }
 

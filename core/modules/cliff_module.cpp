@@ -53,10 +53,10 @@ bool CliffModule::Process() {
 
 list<string> CliffModule::GetNeededSettings() const {
     return {
-        kConfigBasis,
-        kConfigCliff,
-        kConfigGeneral,
-        kConfigSystem
+        settings_.basis.GetName(),
+        settings_.cliff.GetName(),
+        settings_.general.GetName(),
+        settings_.system.GetName()
     };
 }
 

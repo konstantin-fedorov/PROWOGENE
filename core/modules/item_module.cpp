@@ -55,13 +55,13 @@ bool ItemModule::Process() {
 
 list<string> ItemModule::GetNeededSettings() const {
     return {
-        kConfigGeneral,
-        kConfigItem,
-        kConfigLocation,
-        kConfigModel,
-        kConfigNames,
-        kConfigSystem,
-        kConfigTexture
+        settings_.general.GetName(),
+        settings_.item.GetName(),
+        settings_.location.GetName(),
+        settings_.model.GetName(),
+        settings_.names.GetName(),
+        settings_.system.GetName(),
+        settings_.texture.GetName()
     };
 }
 

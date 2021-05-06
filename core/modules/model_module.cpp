@@ -82,11 +82,11 @@ bool ModelModule::Process() {
 
 list<string> ModelModule::GetNeededSettings() const {
     return {
-        kConfigGeneral,
-        kConfigModel,
-        kConfigNames,
-        kConfigSystem,
-        kConfigTexture
+        settings_.general.GetName(),
+        settings_.model.GetName(),
+        settings_.names.GetName(),
+        settings_.system.GetName(),
+        settings_.texture.GetName()
     };
 }
 

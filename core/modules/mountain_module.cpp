@@ -54,11 +54,11 @@ bool MountainModule::Process() {
 
 list<string> MountainModule::GetNeededSettings() const {
     return {
-        kConfigBasis,
-        kConfigGeneral,
-        kConfigLocation,
-        kConfigMountain,
-        kConfigSystem
+        settings_.basis.GetName(),
+        settings_.general.GetName(),
+        settings_.location.GetName(),
+        settings_.mountain.GetName(),
+        settings_.system.GetName()
     };
 }
 

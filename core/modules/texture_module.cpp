@@ -119,11 +119,11 @@ void TextureModule::Deinit() {
 
 list<string> TextureModule::GetNeededSettings() const {
     return {
-        kConfigBasis,
-        kConfigGeneral,
-        kConfigNames,
-        kConfigSystem,
-        kConfigTexture
+        settings_.basis.GetName(),
+        settings_.general.GetName(),
+        settings_.names.GetName(),
+        settings_.system.GetName(),
+        settings_.texture.GetName()
     };
 }
 

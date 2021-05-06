@@ -43,11 +43,11 @@ bool LocationModule::Process() {
 
 list<string> LocationModule::GetNeededSettings() const {
     return {
-        kConfigBasis,
-        kConfigGeneral,
-        kConfigLocation,
-        kConfigNames,
-        kConfigSystem
+        settings_.basis.GetName(),
+        settings_.general.GetName(),
+        settings_.location.GetName(),
+        settings_.names.GetName(),
+        settings_.system.GetName()
     };
 }
 

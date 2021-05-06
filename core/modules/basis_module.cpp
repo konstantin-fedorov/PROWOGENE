@@ -28,9 +28,9 @@ bool BasisModule::Process() {
 
 std::list<std::string> BasisModule::GetNeededSettings() const {
     return {
-        kConfigBasis,
-        kConfigGeneral,
-        kConfigSystem
+        settings_.basis.GetName(),
+        settings_.general.GetName(),
+        settings_.system.GetName()
     };
 }
 

@@ -70,9 +70,9 @@ bool RiverModule::Process() {
 
 list<string> RiverModule::GetNeededSettings() const {
     return {
-        kConfigGeneral,
-        kConfigRiver,
-        kConfigSystem
+        settings_.general.GetName(),
+        settings_.river.GetName(),
+        settings_.system.GetName()
     };
 }
 
