@@ -151,15 +151,11 @@ class Bmp {
                                 const BITMAPFILEHEADER& bfh,
                                 const BITMAPINFOHEADER& bih);
 
-    /** Save image to 24 bit BMP file.
+    /** Save image to BIT_COUNT bit BMP file. Only 24 and 32 are allowed.
     @param [in] file - Filename to save image.
     @param [in] data - Data for saving. */
-    static void Write24BitBmp(const std::string& file, const Image& data);
-
-    /** Save image to 32 bit BMP file.
-    @param [in] file - Filename to save image.
-    @param [in] data - Data for saving. */
-    static void Write32BitBmp(const std::string& file, const Image& data);
+    template <int BIT_COUNT>
+    static void WriteBmp(const std::string& filename, const Image& data);
 };
 
 } // namespace utils
