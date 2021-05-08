@@ -27,9 +27,9 @@ void SingleMountainSettings::Deserialize(JsonObject config) {
     size =         config[kSize];
     height =       config[kHeight];
     noises_count = config[kNoises];
-    gradient =     TC::ToGradient(config[kGradient]);
-    hillside =     TC::ToGradient(config[kHillside]);
-    align =        TC::ToAlign(config[kAlign]);
+    gradient =     TC::To<Gradient>(config[kGradient]);
+    hillside =     TC::To<Gradient>(config[kHillside]);
+    align =        TC::To<Align>(config[kAlign]);
     JsonObject mouth_config = config[kMouth];
     mouth.enabled = mouth_config[kMouthEnabled];
     mouth.width =   mouth_config[kMouthWidth];

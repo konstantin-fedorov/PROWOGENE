@@ -19,11 +19,11 @@ static const string kHeight =      "height";
 
 void BasisSettings::Deserialize(JsonObject config) {
     height =      config[kHeight];
-    surface =     TC::ToSurface(config[kSurface]);
+    surface =     TC::To<Surface>(config[kSurface]);
     periodicity = config[kPeriodicity];
-    distortion =  TC::ToDistortion(config[kDistortion]);
-    align =       TC::ToAlign(config[kAlign]);
-    key_point =   TC::ToKeyPoint(config[kKeyPoint]);
+    distortion =  TC::To<Distortion>(config[kDistortion]);
+    align =       TC::To<Align>(config[kAlign]);
+    key_point =   TC::To<KeyPoint>(config[kKeyPoint]);
 }
 
 JsonObject BasisSettings::Serialize() const {

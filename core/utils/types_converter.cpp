@@ -71,7 +71,8 @@ static const map<Biome, int> kBiomeInt = {
 };
 
 
-Align TypesConverter::ToAlign(const string &str) {
+template <>
+Align TypesConverter::To<Align>(const string &str) {
     for (const auto& elem : kAlignString) {
         if (elem.second == str) {
             return elem.first;
@@ -80,7 +81,8 @@ Align TypesConverter::ToAlign(const string &str) {
     return Align::Default;
 }
 
-Distortion TypesConverter::ToDistortion(const string& str) {
+template <>
+Distortion TypesConverter::To<Distortion>(const string& str) {
     for (const auto& elem : kDistortionString) {
         if (elem.second == str) {
             return elem.first;
@@ -89,7 +91,8 @@ Distortion TypesConverter::ToDistortion(const string& str) {
     return Distortion::None;
 }
 
-Gradient TypesConverter::ToGradient(const string& str) {
+template <>
+Gradient TypesConverter::To<Gradient>(const string& str) {
     for (const auto& elem : kGradientString) {
         if (elem.second == str) {
             return elem.first;
@@ -98,7 +101,8 @@ Gradient TypesConverter::ToGradient(const string& str) {
     return Gradient::Linear;
 }
 
-KeyPoint TypesConverter::ToKeyPoint(const string &str) {
+template <>
+KeyPoint TypesConverter::To<KeyPoint>(const string &str) {
     for (const auto& elem : kKeyPointString) {
         if (elem.second == str) {
             return elem.first;
@@ -107,8 +111,8 @@ KeyPoint TypesConverter::ToKeyPoint(const string &str) {
     return KeyPoint::Default;
 }
 
-
-Surface TypesConverter::ToSurface(const string& str) {
+template <>
+Surface TypesConverter::To<Surface>(const string& str) {
     for (const auto& elem : kSurfaceString) {
         if (elem.second == str) {
             return elem.first;
@@ -117,6 +121,7 @@ Surface TypesConverter::ToSurface(const string& str) {
     return Surface::Flat;
 }
 
+template <>
 string TypesConverter::ToString(Align val) {
     auto str = kAlignString.find(val);
     if (str != kAlignString.end()) {
@@ -126,6 +131,7 @@ string TypesConverter::ToString(Align val) {
     }
 }
 
+template <>
 string TypesConverter::ToString(Distortion val) {
     auto str = kDistortionString.find(val);
     if (str != kDistortionString.end()) {
@@ -135,6 +141,7 @@ string TypesConverter::ToString(Distortion val) {
     }
 }
 
+template <>
 string TypesConverter::ToString(Gradient val) {
     auto str = kGradientString.find(val);
     if (str != kGradientString.end()) {
@@ -144,6 +151,7 @@ string TypesConverter::ToString(Gradient val) {
     }
 }
 
+template <>
 string TypesConverter::ToString(KeyPoint val) {
     auto str = kKeyPointString.find(val);
     if (str != kKeyPointString.end()) {
@@ -153,6 +161,7 @@ string TypesConverter::ToString(KeyPoint val) {
     }
 }
 
+template <>
 string TypesConverter::ToString(Surface val) {
     auto str = kSurfaceString.find(val);
     if (str != kSurfaceString.end()) {
