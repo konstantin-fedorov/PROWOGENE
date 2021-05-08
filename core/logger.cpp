@@ -13,29 +13,29 @@ static const int kDrawWidth = 40;
 static const char kBorder = '#';
 static const string kBorderStr = string(1, kBorder);
 
-Logger::Logger() { }
-
-Logger::Logger(LogLevel lvl_stdout) {
-    log_level_stdout_ = lvl_stdout;
+void StdoutLogWriter::LogMessage(const std::string& msg) {
+    cout << msg << std::endl;
 }
 
-Logger::Logger(LogLevel lvl_file, const std::string& file)
-        : log_level_file_(lvl_file) {
-    log_file_.open(file);
-    if (!log_file_.is_open()) {
-        log_level_file_ = LogLevel::Silent;
-    }
+FileLogWriter::FileLogWriter(const std::string& filename) {
+    log_file_.open(filename);
 }
 
-Logger::Logger(LogLevel lvl_stdout, LogLevel lvl_file, const std::string& file)
-        : Logger(lvl_file, file) {
-    log_level_stdout_ = lvl_stdout;
-}
-
-Logger::~Logger() {
-    if (log_file_.is_open()) {
+FileLogWriter::~FileLogWriter() {
+    if (log_file_.is_open())
         log_file_.close();
+}
+
+void FileLogWriter::LogMessage(const std::string& msg) {
+    if (log_file_.is_open()) {
+        log_file_ << msg << std::endl;
+        log_file_.flush();
     }
+}
+
+void Logger::AddLogWriter(ILogWriter* writer) {
+    if (writer)
+        log_writers_.push_back(writer);
 }
 
 void Logger::ModuleStarted(const IModule* module) {
@@ -86,7 +86,6 @@ void Logger::DrawPipeline(const list<IModule*>& modules) {
     const string hor_line = string(kDrawWidth, kBorder) + "\n";
     const string empty_line =    CreateMessageLine(string(kDrawWidth - 3, ' '));
     const string settings_line = CreateMessageLine("Settings:");
-    const string data_line =     CreateMessageLine("Data:");
     const string arrow_tail =    CreateTitle("||");
     const string arrow_pointer = CreateTitle("\\/");
     for (auto& module : modules) {
@@ -104,8 +103,6 @@ void Logger::DrawPipeline(const list<IModule*>& modules) {
                 message += CreateMessageLine("+ " + item);
             }
             message += empty_line;
-            message += data_line;
-            message += empty_line;
             message += hor_line;
             if (module != modules.back()) {
                 message += arrow_tail;
@@ -119,19 +116,12 @@ void Logger::DrawPipeline(const list<IModule*>& modules) {
 }
 
 void Logger::Log(const list<LogLevel>& levels, const string& msg) {
-    for (const auto level : levels) {
-        if (level == log_level_stdout_) {
-            cout << msg << "\n";
-            break;
-        }
-    }
-    for (const auto level : levels) {
-        if (level == log_level_file_) {
-            if (log_file_.is_open()) {
-                log_file_ << msg << "\n";
-                log_file_.flush();
+    for (ILogWriter* writer : log_writers_) {
+        for (const LogLevel level : levels) {
+            if (level == writer->log_level_) {
+                writer->LogMessage(msg);
+                break;
             }
-            break;
         }
     }
 }

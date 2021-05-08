@@ -132,7 +132,13 @@ int main(int argc, const char *argv[]) {
     // Now any data can be attached to generator.
 
     // Logger can be also attached to generator.
-    Logger logger(LogLevel::Standard, LogLevel::Full, "log.txt");
+    FileLogWriter file_log_writer("log.txt");
+    file_log_writer.log_level_ = LogLevel::Full;
+    StdoutLogWriter stdout_log_writer;
+    stdout_log_writer.log_level_ = LogLevel::Standard;
+    Logger logger;
+    logger.AddLogWriter(&file_log_writer);
+    logger.AddLogWriter(&stdout_log_writer);
     generator.SetLogger(&logger);
 
     // There is unlimited count of modules that can be attached to generator's
