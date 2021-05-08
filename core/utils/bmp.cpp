@@ -129,13 +129,13 @@ bool Bmp::Decode(const string& filename, Image &data) {
 
     switch (bih.biBitCount) {
     case 8:
-        Read8BitColors(data, file_dump, bfh, bih);
+        data = ReadColors<8>(file_dump, bih.biWidth, bih.biHeight, bfh.bfOffBits, bih.biSize);
         break;
     case 24:
-        Read24BitColors(data, file_dump, bfh, bih);
+        data = ReadColors<24>(file_dump, bih.biWidth, bih.biHeight, bfh.bfOffBits, bih.biSize);
         break;
     case 32:
-        Read32BitColors(data, file_dump, bfh, bih);
+        data = ReadColors<32>(file_dump, bih.biWidth, bih.biHeight, bfh.bfOffBits, bih.biSize);
         break;
     default:
         return false;
@@ -144,32 +144,49 @@ bool Bmp::Decode(const string& filename, Image &data) {
     return true;
 }
 
-void Bmp::Read8BitColors(Image& data, const FileDump& file_dump,
-        const BITMAPFILEHEADER& bfh, const BITMAPINFOHEADER& bih) {
-    const int padding = GetPadding(bih.biWidth, 8);
-    data.Resize(bih.biWidth, bih.biHeight);
+template <int BIT_COUNT>
+static Image Bmp::ReadColors(const FileDump& file_dump,
+                             const int width,
+                             const int height,
+                             int pixel_data_pos,
+                             const int info_header_size) {
+    const int padding = GetPadding(width, BIT_COUNT);
+    Image data(width, height);
 
-    vector<RgbaPixel> palette = ReadPalette(file_dump, bih);
+    const vector<RgbaPixel> palette = (BIT_COUNT == 8) ?
+                                      ReadPalette(file_dump, info_header_size) :
+                                      vector<RgbaPixel>();
 
-    int pos = bfh.bfOffBits;
-    for (int y = bih.biHeight - 1; y >= 0; --y) {
-        uint8_t index = 0;
-        for (int x = 0; x < bih.biWidth; ++x) {
-            Read(file_dump, pos, index);
-            data(x, y).red =   palette[index].red;
-            data(x, y).green = palette[index].green;
-            data(x, y).blue =  palette[index].blue;
-            data(x, y).alpha = palette[index].alpha;
+    for (int y = height - 1; y >= 0; --y) {
+        for (int x = 0; x < width; ++x) {
+            if (BIT_COUNT == 8) {
+                uint8_t index = 0;
+                Read(file_dump, pixel_data_pos, index);
+                data(x, y).red   = palette[index].red;
+                data(x, y).green = palette[index].green;
+                data(x, y).blue  = palette[index].blue;
+                data(x, y).alpha = palette[index].alpha;
+            } else {
+                Read(file_dump, pixel_data_pos, data(x, y).blue);
+                Read(file_dump, pixel_data_pos, data(x, y).green);
+                Read(file_dump, pixel_data_pos, data(x, y).red);
+                if (BIT_COUNT == 32) {
+                    Read(file_dump, pixel_data_pos, data(x, y).alpha);
+                }
+            }
         }
         for (int i = 0; i < padding; ++i) {
-            Read(file_dump, pos, index);
+            uint8_t offset_bytes = 0;
+            Read(file_dump, pixel_data_pos, offset_bytes);
         }
     }
+
+    return data;
 }
 
 vector<RgbaPixel> Bmp::ReadPalette(const FileDump& file_dump,
-        const BITMAPINFOHEADER& bih) {
-    int pos = kBitmapFileHeaderSize + bih.biSize;
+                                   const int info_header_size) {
+    int pos = kBitmapFileHeaderSize + info_header_size;
     vector<RgbaPixel> palette;
     static const int palette_size = 256;
     palette.resize(palette_size);
@@ -177,47 +194,13 @@ vector<RgbaPixel> Bmp::ReadPalette(const FileDump& file_dump,
         Read(file_dump, pos, palette[i].blue);
         Read(file_dump, pos, palette[i].green);
         Read(file_dump, pos, palette[i].red);
-        if (bih.biSize == kBitmapCoreHeaderSize) {
+        if (info_header_size == kBitmapCoreHeaderSize) {
             palette[i].alpha = 255;
         } else {
             Read(file_dump, pos, palette[i].alpha);
         }
     }
     return palette;
-}
-
-void Bmp::Read24BitColors(Image& data, const FileDump& file_dump,
-        const BITMAPFILEHEADER& bfh, const BITMAPINFOHEADER& bih) {
-    const int padding = GetPadding(bih.biWidth, 24);
-    data.Resize(bih.biWidth, bih.biHeight);
-
-    int pos = bfh.bfOffBits;
-    for (int y = bih.biHeight - 1; y >= 0; --y) {
-        uint8_t offset_bytes = 0;
-        for (int x = 0; x < bih.biWidth; ++x) {
-            Read(file_dump, pos, data(x, y).blue);
-            Read(file_dump, pos, data(x, y).green);
-            Read(file_dump, pos, data(x, y).red);
-        }
-        for (int i = 0; i < padding; ++i) {
-            Read(file_dump, pos, offset_bytes);
-        }
-    }
-}
-
-void Bmp::Read32BitColors(Image& data, const FileDump& file_dump,
-        const BITMAPFILEHEADER& bfh, const BITMAPINFOHEADER& bih) {
-    data.Resize(bih.biWidth, bih.biHeight);
-
-    int pos = bfh.bfOffBits;
-    for (int y = bih.biHeight - 1; y >= 0; --y) {
-        for (int x = 0; x < bih.biWidth; ++x) {
-            Read(file_dump, pos, data(x, y).blue);
-            Read(file_dump, pos, data(x, y).green);
-            Read(file_dump, pos, data(x, y).red);
-            Read(file_dump, pos, data(x, y).alpha);
-        }
-    }
 }
 
 template <int BIT_COUNT>
