@@ -24,7 +24,7 @@ struct TextureSettings : ISettings {
     /** @copydoc ISettings::Serialize */
     utils::JsonObject Serialize() const override;
     /** @copydoc ISettings::IsCorrect */
-    bool IsCorrect() const override;
+    void Check() const override;
     /** @copydoc ISettings::GetName */
     std::string GetName() const override;
 
@@ -139,7 +139,7 @@ class TextureModule : public IModule {
     /** @copydoc IModule::Deinit. */
     virtual void Deinit();
     /** @copydoc IModule::Process */
-    bool Process() override;
+    void Process() override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */
@@ -150,7 +150,7 @@ class TextureModule : public IModule {
  protected:
     /** Read input images according to selected filenames.
     @return @c true when all images are loaded, @c false otherwise. */
-    virtual bool ReadReferenceTextures();
+    virtual void ReadReferenceTextures();
 
     /** Init bands for splatting textures according to biomes. */
     virtual void InitAlphaBands();

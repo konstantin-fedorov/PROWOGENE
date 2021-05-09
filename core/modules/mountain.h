@@ -19,7 +19,7 @@ struct SingleMountainSettings : ISettings {
     /** @copydoc ISettings::Serialize */
     utils::JsonObject Serialize() const override;
     /** @copydoc ISettings::IsCorrect */
-    bool IsCorrect() const override;
+    void Check() const override;
     /** @copydoc ISettings::GetName */
     std::string GetName() const override;
 
@@ -53,7 +53,7 @@ struct MountainSettings : ISettings {
     /** @copydoc ISettings::Serialize */
     utils::JsonObject Serialize() const override;
     /** @copydoc ISettings::IsCorrect */
-    bool IsCorrect() const override;
+    void Check() const override;
     /** @copydoc ISettings::GetName */
     std::string GetName() const override;
 
@@ -71,7 +71,7 @@ Creates mountains and places them on heightmap. Also marks their locations. */
 class MountainModule : public IModule {
  public:
     /** @copydoc IModule::Process */
-    bool Process() override;
+    void Process() override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */

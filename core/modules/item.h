@@ -227,7 +227,7 @@ class ItemModule : public IModule {
     /** @copydoc IModule::Init */
     void Init() override;
     /** @copydoc IModule::Process */
-    bool Process() override;
+    void Process() override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */

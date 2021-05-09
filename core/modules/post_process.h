@@ -18,7 +18,7 @@ struct PostprocessSettings : ISettings {
     /** @copydoc ISettings::Serialize */
     utils::JsonObject Serialize() const override;
     /** @copydoc ISettings::IsCorrect */
-    bool IsCorrect() const override;
+    void Check() const override;
     /** @copydoc ISettings::GetName */
     std::string GetName() const override;
 
@@ -44,7 +44,7 @@ Invert height map, crops it or exponentiate all values in it. */
 class PostProcessModule : public IModule {
  public:
     /** @copydoc IModule::Process */
-    bool Process() override;
+    void Process() override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */

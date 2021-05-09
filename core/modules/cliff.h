@@ -19,7 +19,7 @@ struct CliffSettings : ISettings {
     /** @copydoc ISettings::Serialize */
     utils::JsonObject Serialize() const override;
     /** @copydoc ISettings::IsCorrect */
-    bool IsCorrect() const override;
+    void Check() const override;
     /** @copydoc ISettings::GetName */
     std::string GetName() const override;
 
@@ -42,7 +42,7 @@ Creates cliffs at some levels and adds them to height map. */
 class CliffModule : public IModule {
  public:
     /** @copydoc IModule::Process */
-    bool Process() override;
+    void Process() override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */

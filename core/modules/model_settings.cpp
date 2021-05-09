@@ -40,8 +40,8 @@ JsonObject ModelSettings::Serialize() const {
     return config;
 }
 
-bool ModelSettings::IsCorrect() const {
-    return (map_height > 0.0f - kEps);
+void ModelSettings::Check() const {
+    CheckCondition(map_height > 0.0f - kEps, "map_height is less than 0.0");
 }
 
 string ModelSettings::GetName() const {

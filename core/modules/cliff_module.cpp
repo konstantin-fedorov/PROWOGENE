@@ -13,7 +13,7 @@ using std::string;
 using utils::Array2D;
 using AT = utils::Array2DTools;
 
-bool CliffModule::Process() {
+void CliffModule::Process() {
     const int size = settings_.general.size;
     const int octaves_count = settings_.cliff.octaves;
     const int levels_count = settings_.cliff.levels;
@@ -22,7 +22,7 @@ bool CliffModule::Process() {
     const int threads = settings_.system.thread_count;
 
     if (!settings_.cliff.enabled) {
-        return true;
+        return;
     }
 
     if (height_map_->Width() != size ||
@@ -47,8 +47,6 @@ bool CliffModule::Process() {
 
     AT::ApplyFilter(*height_map_, Operation::Min, *height_map_, cliff_map,
         threads);
-
-    return true;
 }
 
 list<string> CliffModule::GetNeededSettings() const {

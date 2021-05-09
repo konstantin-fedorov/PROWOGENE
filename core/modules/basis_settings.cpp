@@ -37,11 +37,9 @@ JsonObject BasisSettings::Serialize() const {
     return config;
 }
 
-bool BasisSettings::IsCorrect() const {
-    if (height < 0.0f || height > 1.0f || periodicity < 1) {
-        return false;
-    }
-    return true;
+void BasisSettings::Check() const {
+    CheckInRange(height, 0.f, 1.f, "height");
+    CheckCondition(periodicity > 0, "periodicity is less than 1");
 }
 
 string BasisSettings::GetName() const {

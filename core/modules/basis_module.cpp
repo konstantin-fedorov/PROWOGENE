@@ -8,7 +8,7 @@ namespace modules {
 using utils::Array2D;
 using AT = utils::Array2DTools;
 
-bool BasisModule::Process() {
+void BasisModule::Process() {
     const int size = settings_.general.size;
     if (height_map_->Width() != size || height_map_->Height() != size) {
         height_map_->Resize(size, size);
@@ -22,8 +22,6 @@ bool BasisModule::Process() {
     AT::ApplyDistortion(*height_map_, basis.distortion);
     AT::ToRange(*height_map_, 0.0f, basis.height, threads);
     AT::SetAlign(*height_map_, basis.key_point, basis.align);
-
-    return true;
 }
 
 std::list<std::string> BasisModule::GetNeededSettings() const {

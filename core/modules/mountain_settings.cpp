@@ -52,15 +52,13 @@ JsonObject SingleMountainSettings::Serialize() const {
     return config;
 }
 
-bool SingleMountainSettings::IsCorrect() const {
-    if (size < 2 || (size & (size - 1)) ||
-            height < 0.0f || height > 1.0f ||
-            noises_count < 1 ||
-            mouth.width < 0.0f || mouth.width > 1.0f ||
-            mouth.depth < 0.0f || mouth.depth > 1.0f) {
-        return false;
-    }
-    return true;
+void SingleMountainSettings::Check() const {
+    CheckCondition(size > 1,         "size is less than 2");
+    CheckCondition(!(size&(size-1)), "size isn't a power of 2");
+    CheckInRange(height, 0.f, 1.f, "height");
+    CheckCondition(noises_count > 0, "noises_count is less than 1");
+    CheckInRange(mouth.width, 0.f, 1.f, "mouth.width");
+    CheckInRange(mouth.depth, 0.f, 1.f, "mouth.depth");
 }
 
 string SingleMountainSettings::GetName() const {
@@ -94,16 +92,14 @@ JsonObject MountainSettings::Serialize() const {
     return config;
 }
 
-bool MountainSettings::IsCorrect() const {
+void MountainSettings::Check() const {
     if (settings.size() < count) {
-        return false;
+        throw LogicException(
+            "Mountain settings count is less than mountain count.");
     }
     for (auto& mountain : settings) {
-        if (!mountain.IsCorrect()) {
-            return false;
-        }
+        mountain.Check();
     }
-    return true;
 }
 
 string MountainSettings::GetName() const {

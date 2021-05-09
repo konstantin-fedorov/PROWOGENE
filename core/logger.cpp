@@ -64,13 +64,8 @@ void Logger::LogError(const IModule* module, const string& msg) {
         LogLevel::Full
     };
     const string module_name = module ? module->GetName() : "???";
-    const string module_status = module ? module->GetStatus() : "???";
     const string error = module_name + " module error: ";
-    if (!msg.size()) {
-        Log(levels, error + module_status);
-    } else {
-        Log(levels, error + msg);
-    }
+    Log(levels, error + msg);
 }
 
 void Logger::LogMessage(const std::string& msg) {

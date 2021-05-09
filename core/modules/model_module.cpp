@@ -14,11 +14,11 @@ using utils::Vector3D;
 using utils::Range;
 using utils::VertexGroup;
 
-bool ModelModule::Process() {
+void ModelModule::Process() {
     const bool chunks_enabled = settings_.model.chunks_enabled;
     const bool complex_enabled = settings_.model.complex_enabled;
     if (!chunks_enabled && !complex_enabled) {
-        return true;
+        return;
     }
 
     const int size = settings_.general.size;
@@ -77,7 +77,6 @@ bool ModelModule::Process() {
             model_io_->Save(complex, params);
         }
     }
-    return true;
 }
 
 list<string> ModelModule::GetNeededSettings() const {

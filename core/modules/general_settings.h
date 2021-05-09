@@ -16,7 +16,7 @@ struct GeneralSettings : ISettings {
     /** @copydoc ISettings::Serialize */
     utils::JsonObject Serialize() const override;
     /** @copydoc ISettings::IsCorrect */
-    bool IsCorrect() const override;
+    void Check() const override;
     /** @copydoc ISettings::GetName */
     std::string GetName() const override;
 

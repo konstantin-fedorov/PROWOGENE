@@ -37,14 +37,11 @@ JsonObject SingleRiverSettings::Serialize() const {
     return config;
 }
 
-bool SingleRiverSettings::IsCorrect() const {
-    if (max_head_height < 0.0f || max_head_height > 1.0f ||
-            distortion < 0.0f || distortion > 1.0f ||
-            channel.depth < 0.0f || channel.depth > 1.0f ||
-            channel.width < 1) {
-        return false;
-    }
-    return true;
+void SingleRiverSettings::Check() const {
+    CheckInRange(max_head_height, 0.f, 1.f, "max_head_height");
+    CheckInRange(distortion,      0.f, 1.f, "distortion");
+    CheckInRange(channel.depth,   0.f, 1.f, "channel.depth");
+    CheckCondition(channel.width > 0, "channel.width is less than 1");
 }
 
 string SingleRiverSettings::GetName() const {
@@ -76,16 +73,13 @@ JsonObject RiverSettings::Serialize() const {
     return config;
 }
 
-bool RiverSettings::IsCorrect() const {
-    if (settings.size() < count || smooth_radius < 0) {
-        return false;
-    }
+void RiverSettings::Check() const {
+    CheckCondition(settings.size() >= count,
+                   "River settings count is less than rivers count.");
+    CheckCondition(smooth_radius >= 0, "smooth_radius is less than 0");
     for (auto& river : settings) {
-        if (!river.IsCorrect()) {
-            return false;
-        }
+        river.Check();
     }
-    return true;
 }
 
 string RiverSettings::GetName() const {

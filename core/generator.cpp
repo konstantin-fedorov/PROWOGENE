@@ -124,9 +124,11 @@ bool Generator::Generate() {
             return false;
         }
         module->Init();
-        bool success = module->Process();
-        if (!success) {
-            logger_->LogError(module);
+        try {
+            module->Process();
+        }
+        catch (const LogicException& e) {
+            logger_->LogError(module, e.what());
             module->Deinit();
             return false;
         }
@@ -154,9 +156,12 @@ bool Generator::ApplySettings(IModule* module) {
         LazySettingsCheck& settings_to_check = needed->second;
         ISettings* set = settings_to_check.settings;
         if (!settings_to_check.was_checked) {
-            const bool success = settings_to_check.settings->IsCorrect();
-            if (!success) {
-                const string msg = "Settings '" + set->GetName() + "' are incorrect.";
+            try {
+                settings_to_check.settings->Check();
+            }
+            catch (const LogicException& e) {
+                const string msg = "Settings '" + set->GetName() +
+                                   "' are incorrect: " + e.what();
                 logger_->LogError(module, msg);
                 return false;
             }

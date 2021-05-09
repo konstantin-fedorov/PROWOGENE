@@ -15,9 +15,9 @@ using utils::Array2D;
 using utils::Random;
 using AT = utils::Array2DTools;
 
-bool MountainModule::Process() {
+void MountainModule::Process() {
     if (settings_.mountain.count < 1) {
-        return true;
+        return;
     }
 
     const int thread_count = settings_.system.thread_count;
@@ -36,7 +36,7 @@ bool MountainModule::Process() {
         SingleMountainSettings& mountain_settings =
             settings_.mountain.settings[i];
         if (mountain_settings.size > size) {
-            return false;
+            throw LogicException("Mountain size is greater than map size.");
         }
 
         Mountain(mountain, mountain_settings, rand.Next(), thread_count);
@@ -48,8 +48,6 @@ bool MountainModule::Process() {
     }
 
     MarkMountains(ridge);
-
-    return true;
 }
 
 list<string> MountainModule::GetNeededSettings() const {

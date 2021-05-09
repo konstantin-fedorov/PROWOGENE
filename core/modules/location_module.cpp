@@ -19,9 +19,9 @@ using utils::Random;
 using utils::RgbaPixel;
 using AT = utils::Array2DTools;
 
-bool LocationModule::Process() {
+void LocationModule::Process() {
     if (!settings_.location.enabled) {
-        return true;
+        return;
     }
 
     const int size = settings_.general.size;
@@ -37,8 +37,6 @@ bool LocationModule::Process() {
     if (settings_.location.map_enable)  {
         SaveMap(settings_.names.location_map.c_str());
     }
-
-    return true;
 }
 
 list<string> LocationModule::GetNeededSettings() const {

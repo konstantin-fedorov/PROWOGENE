@@ -149,22 +149,19 @@ JsonObject TextureSettings::Serialize() const {
     return config;
 }
 
-bool TextureSettings::IsCorrect() const {
-    if (normals.strength < 0.0f || normals.strength > 1.0f ||
-            splatting.depth < 0.0f || splatting.depth > 1.0f ||
-            splatting.bandwidth < 0.0f || splatting.bandwidth > 1.0f ||
-            splatting.randomness < 0.0f || splatting.randomness > 1.0f ||
-            gradient.opacity < 0.0f || gradient.opacity > 1.0f ||
-            shadow.strength < 0.0f || shadow.strength > 1.0f ||
-            gradient.opacity < 0.0f || gradient.opacity > 1.0f ||
-            images.decals.chance < 0.0f || images.decals.chance > 1.0f) {
-        return false;
-    }
-    if (minimap.enabled && (minimap.tile_size < 1 ||
-            (minimap.tile_size & (minimap.tile_size - 1)))) {
-        return false;
-    }
-    return true;
+void TextureSettings::Check() const {
+    CheckInRange(normals.strength,     0.f, 1.f, "normals.strength");
+    CheckInRange(splatting.depth,      0.f, 1.f, "splatting.depth");
+    CheckInRange(splatting.bandwidth,  0.f, 1.f, "splatting.bandwidth");
+    CheckInRange(splatting.randomness, 0.f, 1.f, "splatting.randomness");
+    CheckInRange(gradient.opacity,     0.f, 1.f, "gradient.opacity");
+    CheckInRange(shadow.strength,      0.f, 1.f, "shadow.strength");
+    CheckInRange(images.decals.chance, 0.f, 1.f, "normals.strength");
+    if (!minimap.enabled)
+        return;
+    CheckCondition(minimap.tile_size > 0, "minimap.tile_size is less than 1");
+    CheckCondition(!(minimap.tile_size & (minimap.tile_size - 1)),
+                   "minimap.tile_size isn't a power of 2");
 }
 
 string TextureSettings::GetName() const {

@@ -24,13 +24,11 @@ JsonObject GeneralSettings::Serialize() const {
     return config;
 }
 
-bool GeneralSettings::IsCorrect() const {
-    if ((size & (size - 1)) ||
-            (chunk_size & (chunk_size - 1)) ||
-            size < chunk_size) {
-        return false;
-    }
-    return true;
+void GeneralSettings::Check() const {
+    CheckCondition(size >= chunk_size, "size is less than chunk_size");
+    CheckCondition(!(size&(size-1)),   "size isn`t a power of 2");
+    CheckCondition(!(chunk_size&(chunk_size-1)),
+                   "chunk_size isn`t a power of 2");
 }
 
 string GeneralSettings::GetName() const {
