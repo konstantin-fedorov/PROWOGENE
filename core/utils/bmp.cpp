@@ -145,11 +145,11 @@ bool Bmp::Decode(const string& filename, Image &data) {
 }
 
 template <int BIT_COUNT>
-static Image Bmp::ReadColors(const FileDump& file_dump,
-                             const int width,
-                             const int height,
-                             int pixel_data_pos,
-                             const int info_header_size) {
+Image Bmp::ReadColors(const FileDump& file_dump,
+                      const int width,
+                      const int height,
+                      int pixel_data_pos,
+                      const int info_header_size) {
     const int padding = GetPadding(width, BIT_COUNT);
     Image data(width, height);
 

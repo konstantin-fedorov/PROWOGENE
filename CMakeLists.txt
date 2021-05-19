@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.4)
 
 project(PROWOGENE)
 
+if (UNIX)
+    set(CMAKE_CXX_FLAGS "-pthread")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+endif()
+
 option (PROWOGENE_ENABLE_TESTS  "Build tests" OFF)
 
 add_subdirectory(console)

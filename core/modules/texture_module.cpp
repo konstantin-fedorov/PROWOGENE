@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <string>
+#include <functional>
 #include <thread>
 #include <tuple>
 #include <utility>

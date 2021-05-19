@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include <algorithm>
+#include <functional>
 #include <thread>
 
 #include "utils/random.h"
