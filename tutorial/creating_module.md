@@ -25,9 +25,7 @@ namespace modules {
 
 class CliffModule : public IModule {
  public:
-    void SetStorage(Storage* storage) override;
-    bool Process() override;
-    std::list<std::string> GetNeededData() const override;
+    void Process() override;
     std::list<std::string> GetNeededSettings() const override;
     void ApplySettings(ISettings* settings) override;
     std::string GetName() const override;
@@ -49,16 +47,8 @@ namespace modules {
 using std::list;
 using std::string;
 
-void CliffModule::SetStorage(Storage* storage) {
+void CliffModule::Process() {
 
-}
-
-bool CliffModule::Process() {
-    return true;
-}
-
-list<string> CliffModule::GetNeededData() const {
-    return { };
 }
 
 list<string> CliffModule::GetNeededSettings() const {
@@ -93,51 +83,47 @@ Note that order of adding is significant, so place module when needed. Cliffs cr
 ## Improoving module logic
 
 ### Manage access height map from storage
-Cliff module will modify height map, so we need to have access to it from ```Storage```. For quick access to it, stor pointer to height map inside module:
+Cliff module will modify height map, which was modified by previously processed modules, so we need to have access to it. For quick and readable way to use it, store pointer to height map inside module:
 ```
-protected:
+public:
     utils::Array2D<float>* height_map_ = nullptr;
 ```
 
-For link that pointer with pipeline's data we must improove ```SetStorage``` and ```GetNeededData``` methods:
+For link that pointer with pipeline's data we must add following code to the cliff module initialization in application which builds generation pipeline:
 ```
-void CliffModule::SetStorage(Storage* storage) {
-    LinkData(height_map_, storage, kStorageHeightMap);
-}
-
-list<string> CliffModule::GetNeededData() const {
-    return {
-        kStorageHeightMap
-    };
-}
+    Array2D<float>    height_map;
+    cliff_module.height_map_ = &height_map;
 ```
 
 ### Process height map
 
-Also we need access to general settings. Include ```general_settings.h``` in header file and add entity for settings storage in module declaration:
+Also we need access to general settings. Include headers with needed settings declarations (like ```general_settings.h```) in header file and add entity for settings storage in module declaration. Good idea to group all settings in protected unnamed struct:
 ```
-struct {
-    BasisSettings   basis;
-    GeneralSettings general;
-} settings_;
+ protected:
+    struct {
+        BasisSettings   basis;
+        GeneralSettings general;
+    } settings_;
 ```
 
 To copy settings there, improove methods ```GetNeededSettings``` and ```ApplySettings```:
 ```
 list<string> CliffModule::GetNeededSettings() const {
     return {
-        kConfigBasis,
-        kConfigGeneral
+        settings_.basis.GetName(),
+        settings_.general.GetName(),
+        settings_.system.GetName()
     };
 }
 
 void CliffModule::ApplySettings(ISettings* settings) {
     CopySettings(settings, settings_.basis);
     CopySettings(settings, settings_.general);
+    CopySettings(settings, settings_.system);
 }
 ```
 
-Now we are ready to start improoving ```Process``` method:
+Now we are ready to start improoving ```Process``` method. There is no expected runtime problems or possible conflicts in this example. But in other modules there can be some troubles on the fly. To inform generator about problems, throw ```LogicException``` from this method:
 ```
 #include <cmath>
 #include "utils/array2d_tools.h"
@@ -145,12 +131,17 @@ Now we are ready to start improoving ```Process``` method:
 using utils::Array2D;
 using AT = utils::Array2DTools;
 
-bool CliffModule::Process() {
+void CliffModule::Process() {
     const int size = settings_.general.size;
-    const int octaves_count = 6;
-    const int levels_count = 5;
-    const int seed = 4321;
+    const int octaves_count = 7;
+    const int levels_count = 6;
+    const int seed = 123;
     const float step = 1.0f / (levels_count - 1);
+    const int threads = settings_.system.thread_count;
+
+    if (!settings_.cliff.enabled) {
+        return;
+    }
 
     if (height_map_->Width() != size ||
             height_map_->Height() != size) {
@@ -162,19 +153,18 @@ bool CliffModule::Process() {
 
     Array2D<float> noise(size, size);
     AT::WhiteNoise(noise, size, seed);
-    AT::ToRange(noise, 0.0f, step * 0.1);
+    AT::ToRange(noise, 0.0f, step * settings_.cliff.grain, threads);
 
     for (auto& elem : cliff_map) {
         const float scaled = elem * levels_count - step / 2.0f;
         const int level_id = static_cast<int>(std::round(scaled));
         elem = level_id * step * settings_.basis.height;
     }
-    AT::AddFilter(cliff_map, Operation::Sum, cliff_map, noise);
-    AT::Smooth(cliff_map, 2);
+    AT::ApplyFilter(cliff_map, Operation::Add, cliff_map, noise, threads);
+    AT::Smooth(cliff_map, 2, threads);
 
-    AT::AddFilter(*height_map_, Operation::Min, *height_map_, cliff_map);
-
-    return true;
+    AT::ApplyFilter(*height_map_, Operation::Min, *height_map_, cliff_map,
+        threads);
 }
 ```
 Now that module modifies height map and can be easily integrated with generator. But that module can't be modified yet - ```octaves_count```, ```levels_count``` and ```seed``` values are hardcoded inside ```Process``` method. Also there is no opportunity to disable this module.
@@ -188,13 +178,14 @@ const std::string kConfigCliff = "cliff";
 struct CliffSettings : ISettings {
     void Deserialize(utils::JsonObject config) override;
     utils::JsonObject Serialize() const override;
+    void Check() const override;
     std::string GetName() const override;
-    bool IsCorrect() const override;
 
     bool enabled = false;
     int  octaves = 3;
     int  levels = 8;
     int  seed = 0;
+    float grain = 0.0325f;
 };
 ```
 
@@ -212,12 +203,14 @@ static const string kEnabled = "enabled";
 static const string kOctaves = "octaves";
 static const string kLevels =  "levels";
 static const string kSeed =    "seed";
+static const string kGrain =   "grain";
 
 void CliffSettings::Deserialize(JsonObject config) {
     enabled = config[kEnabled];
     octaves = config[kOctaves];
     levels =  config[kLevels];
     seed =    config[kSeed];
+    grain =   config[kGrain];
 }
 
 JsonObject CliffSettings::Serialize() const {
@@ -226,6 +219,7 @@ JsonObject CliffSettings::Serialize() const {
     config[kOctaves] = octaves;
     config[kLevels] =  levels;
     config[kSeed] =    seed;
+    config[kGrain] =   grain;
     return config;
 }
 
@@ -233,15 +227,11 @@ string CliffSettings::GetName() const {
     return kConfigCliff;
 }
 
-bool CliffSettings::IsCorrect() const {
-    if (octaves < 1 ||
-            levels < 2 ||
-            seed < 0 ||
-            grain < 0.0f ||
-            grain > 1.0f) {
-        return false;
-    }
-    return true;
+void CliffSettings::Check() const {
+    CheckCondition(octaves > 0, "octaves is less than 1");
+    CheckCondition(levels > 1,  "levels is less than 2");
+    CheckCondition(seed >= 0,   "seed is less than 1");
+    CheckInRange(grain, 0.f, 1.f, "grain");
 }
 
 } // namespace modules
@@ -261,9 +251,10 @@ Copy it from generator:
 
 list<string> CliffModule::GetNeededSettings() const {
     return {
-        kConfigBasis,
-        kConfigCliff,
-        kConfigGeneral
+        settings_.basis.GetName(),
+        settings_.cliff.GetName(),
+        settings_.general.GetName(),
+        settings_.system.GetName()
     };
 }
 
@@ -271,25 +262,27 @@ void CliffModule::ApplySettings(ISettings* settings) {
     CopySettings(settings, settings_.basis);
     CopySettings(settings, settings_.cliff);
     CopySettings(settings, settings_.general);
+    CopySettings(settings, settings_.system);
 }
 ```
 Add settings to pipeline (in ```console.cpp```):
 ```
 CliffSettings cliff_settings;
-generator.PushBackModule(&cliff_module);
+generator.AddSettings(&cliff_settings);
 ```
 
 And use it inside module:
 ```
-bool CliffModule::Process() {
+void CliffModule::Process() {
     const int size = settings_.general.size;
     const int octaves_count = settings_.cliff.octaves;
     const int levels_count = settings_.cliff.levels;
     const int seed = settings_.cliff.seed;
     const float step = 1.0f / (levels_count - 1);
+    const int threads = settings_.system.thread_count;
 
     if (!settings_.cliff.enabled) {
-        return true;
+        return;
     }
 
     if (height_map_->Width() != size ||
@@ -302,19 +295,18 @@ bool CliffModule::Process() {
 
     Array2D<float> noise(size, size);
     AT::WhiteNoise(noise, size, seed);
-    AT::ToRange(noise, 0.0f, step * settings_.cliff.grain);
+    AT::ToRange(noise, 0.0f, step * settings_.cliff.grain, threads);
 
     for (auto& elem : cliff_map) {
         const float scaled = elem * levels_count - step / 2.0f;
         const int level_id = static_cast<int>(std::round(scaled));
         elem = level_id * step * settings_.basis.height;
     }
-    AT::AddFilter(cliff_map, Operation::Sum, cliff_map, noise);
-    AT::Smooth(cliff_map, 2);
+    AT::ApplyFilter(cliff_map, Operation::Add, cliff_map, noise, threads);
+    AT::Smooth(cliff_map, 2, threads);
 
-    AT::AddFilter(*height_map_, Operation::Min, *height_map_, cliff_map);
-
-    return true;
+    AT::ApplyFilter(*height_map_, Operation::Min, *height_map_, cliff_map,
+        threads);
 }
 ```
 
