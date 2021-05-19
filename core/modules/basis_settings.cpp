@@ -19,11 +19,11 @@ static const string kHeight =      "height";
 
 void BasisSettings::Deserialize(JsonObject config) {
     height =      config[kHeight];
-    surface =     TC::ToSurface(config[kSurface]);
+    surface =     TC::To<Surface>(config[kSurface]);
     periodicity = config[kPeriodicity];
-    distortion =  TC::ToDistortion(config[kDistortion]);
-    align =       TC::ToAlign(config[kAlign]);
-    key_point =   TC::ToKeyPoint(config[kKeyPoint]);
+    distortion =  TC::To<Distortion>(config[kDistortion]);
+    align =       TC::To<Align>(config[kAlign]);
+    key_point =   TC::To<KeyPoint>(config[kKeyPoint]);
 }
 
 JsonObject BasisSettings::Serialize() const {
@@ -37,11 +37,9 @@ JsonObject BasisSettings::Serialize() const {
     return config;
 }
 
-bool BasisSettings::IsCorrect() const {
-    if (height < 0.0f || height > 1.0f || periodicity < 1) {
-        return false;
-    }
-    return true;
+void BasisSettings::Check() const {
+    CheckInRange(height, 0.f, 1.f, "height");
+    CheckCondition(periodicity > 0, "periodicity is less than 1");
 }
 
 string BasisSettings::GetName() const {

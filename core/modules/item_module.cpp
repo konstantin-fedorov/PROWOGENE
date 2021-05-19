@@ -17,21 +17,15 @@ using utils::JsonValue;
 using AT = utils::Array2DTools;
 using TC = utils::TypesConverter;
 
-void ItemModule::SetStorage(Storage* storage) {
-    LinkData(height_map_,   storage, kStorageHeightMap);
-    LinkData(location_map_, storage, kStorageLocationMap);
-    LinkData(sea_level_,    storage, kStorageSeaLevel);
-}
-
 void ItemModule::Init() {
     const int size = settings_.general.size;
     object_mask_.Resize(size, size);
     rand_ = Random(settings_.general.seed);
 }
 
-bool ItemModule::Process() {
+void ItemModule::Process() {
     if (!settings_.item.enabled) {
-        return true;
+        return;
     }
 
     const vector<pair<ImportItemList, Location> > item_lists = {
@@ -46,8 +40,7 @@ bool ItemModule::Process() {
     for (const auto& item_list : item_lists) {
         const bool success = PlaceLocation(item_list.first, item_list.second);
         if (!success) {
-            status_ = "Can't place items.";
-            return false;
+            throw LogicException("Can't place items.");
         }
     }
     AT::Smooth(*height_map_, 1, settings_.system.thread_count);
@@ -55,27 +48,17 @@ bool ItemModule::Process() {
     ExportWorldSettings info = CreateExportInfo();
     const JsonValue config = info.Serialize();
     config.Save(settings_.item.config.file, settings_.item.config.pretty);
-
-    return true;
-}
-
-list<string> ItemModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageLocationMap,
-        kStorageSeaLevel
-    };
 }
 
 list<string> ItemModule::GetNeededSettings() const {
     return {
-        kConfigGeneral,
-        kConfigItem,
-        kConfigLocation,
-        kConfigModel,
-        kConfigNames,
-        kConfigSystem,
-        kConfigTexture
+        settings_.general.GetName(),
+        settings_.item.GetName(),
+        settings_.location.GetName(),
+        settings_.model.GetName(),
+        settings_.names.GetName(),
+        settings_.system.GetName(),
+        settings_.texture.GetName()
     };
 }
 

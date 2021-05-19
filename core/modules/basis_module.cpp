@@ -8,11 +8,7 @@ namespace modules {
 using utils::Array2D;
 using AT = utils::Array2DTools;
 
-void BasisModule::SetStorage(Storage* storage) {
-    LinkData(height_map_, storage, kStorageHeightMap);
-}
-
-bool BasisModule::Process() {
+void BasisModule::Process() {
     const int size = settings_.general.size;
     if (height_map_->Width() != size || height_map_->Height() != size) {
         height_map_->Resize(size, size);
@@ -26,21 +22,13 @@ bool BasisModule::Process() {
     AT::ApplyDistortion(*height_map_, basis.distortion);
     AT::ToRange(*height_map_, 0.0f, basis.height, threads);
     AT::SetAlign(*height_map_, basis.key_point, basis.align);
-
-    return true;
-}
-
-std::list<std::string> BasisModule::GetNeededData() const {
-    return {
-        kStorageHeightMap
-    };
 }
 
 std::list<std::string> BasisModule::GetNeededSettings() const {
     return {
-        kConfigBasis,
-        kConfigGeneral,
-        kConfigSystem
+        settings_.basis.GetName(),
+        settings_.general.GetName(),
+        settings_.system.GetName()
     };
 }
 

@@ -89,6 +89,21 @@
             }
         ]
     },
+    "location": {
+        "enabled": true,
+        "forest_octaves": 4,
+        "forest_ratio": 0.75,
+        "export_map": true,
+        "colors": {
+            "none":     "#000000FF",
+            "forest":   "#228822FF",
+            "glade":    "#88FF00FF",
+            "mountain": "#444444FF",
+            "river":    "#000088FF",
+            "beach":    "#FFFF00FF",
+            "sea":      "#0000FFFF"
+        }
+    },
     "model": {
         "complex_enabled" : true,
         "materials_enabled": false,

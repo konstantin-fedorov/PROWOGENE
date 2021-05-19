@@ -5,6 +5,7 @@
 #include "system_settings.h"
 #include "modules/basis.h"
 #include "utils/image_io.h"
+#include "utils/random.h"
 
 namespace prowogene {
 namespace modules {
@@ -23,7 +24,7 @@ struct TextureSettings : ISettings {
     /** @copydoc ISettings::Serialize */
     utils::JsonObject Serialize() const override;
     /** @copydoc ISettings::IsCorrect */
-    bool IsCorrect() const override;
+    void Check() const override;
     /** @copydoc ISettings::GetName */
     std::string GetName() const override;
 
@@ -137,12 +138,8 @@ class TextureModule : public IModule {
  public:
     /** @copydoc IModule::Deinit. */
     virtual void Deinit();
-    /** @copydoc IModule::SetStorage */
-    void SetStorage(Storage* storage) override;
     /** @copydoc IModule::Process */
-    bool Process() override;
-    /** @copydoc IModule::GetNeededData */
-    std::list<std::string> GetNeededData() const override;
+    void Process() override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */
@@ -153,7 +150,7 @@ class TextureModule : public IModule {
  protected:
     /** Read input images according to selected filenames.
     @return @c true when all images are loaded, @c false otherwise. */
-    virtual bool ReadReferenceTextures();
+    virtual void ReadReferenceTextures();
 
     /** Init bands for splatting textures according to biomes. */
     virtual void InitAlphaBands();
@@ -363,6 +360,7 @@ class TextureModule : public IModule {
     /** Minimap image. */
     utils::Image                            minimap_;
 
+ public:
     /** Height map from data storage. */
     utils::Array2D<float>* height_map_ = nullptr;
     /** River mask from data storage. */
@@ -376,6 +374,7 @@ class TextureModule : public IModule {
     /** Image input/output worker from data storage. */
     utils::ImageIO*        image_io_ = nullptr;
 
+ protected:
     /** Settings for module. */
     struct {
         /** Basis settings. */

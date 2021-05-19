@@ -3,6 +3,7 @@
 
 #include "system_settings.h"
 #include "module_interface.h"
+#include "utils/array2d.h"
 
 namespace prowogene {
 namespace modules {
@@ -19,7 +20,7 @@ struct WaterSettings : ISettings {
     /** @copydoc ISettings::IsCorrect
 
     Note: sea.ratio + beach.ratio must be less than 1.0. */
-    bool IsCorrect() const override;
+    void Check() const override;
     /** @copydoc ISettings::GetName */
     std::string GetName() const override;
 
@@ -46,12 +47,8 @@ struct WaterSettings : ISettings {
 Detects sea and beach levels. Also can emulate erosion in lakes and seas. */
 class WaterModule : public IModule {
  public:
-    /** @copydoc IModule::SetStorage */
-    void SetStorage(Storage* storage) override;
     /** @copydoc IModule::Process */
-    bool Process() override;
-    /** @copydoc IModule::GetNeededData */
-    std::list<std::string> GetNeededData() const override;
+    void Process() override;
     /** @copydoc IModule::GetNeededSettings */
     std::list<std::string> GetNeededSettings() const override;
     /** @copydoc IModule::ApplySettings */
@@ -59,13 +56,15 @@ class WaterModule : public IModule {
     /** @copydoc IModule::GetName */
     std::string GetName() const override;
 
- protected:
+ public:
     /** Height map from data storage. */
     utils::Array2D<float>* height_map_ = nullptr;
     /** Beach level from data storage. */
     float* beach_level_ = nullptr;
     /** Sea level from data storage. */
     float* sea_level_ = nullptr;
+
+ protected:
     /** Settings for module. */
     struct {
         /** System settings. */

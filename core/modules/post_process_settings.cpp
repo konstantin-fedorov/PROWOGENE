@@ -35,13 +35,11 @@ JsonObject PostprocessSettings::Serialize() const {
     return config;
 }
 
-bool PostprocessSettings::IsCorrect() const {
-    if (heightmap.crop_bottom < 0.0f || heightmap.crop_bottom > 1.0f ||
-            heightmap.crop_top < 0.0f || heightmap.crop_top > 1.0f ||
-            heightmap.crop_bottom > heightmap.crop_top) {
-        return false;
-    }
-    return true;
+void PostprocessSettings::Check() const {
+    CheckInRange(heightmap.crop_bottom, 0.f, 1.f, "heightmap.crop_bottom");
+    CheckInRange(heightmap.crop_top,    0.f, 1.f, "heightmap.crop_top");
+    CheckCondition(heightmap.crop_bottom <= heightmap.crop_top,
+                   "heightmap.crop_bottom is more than heightmap.crop_top");
 }
 
 string PostprocessSettings::GetName() const {

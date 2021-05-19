@@ -20,31 +20,52 @@ enum class LogLevel {
 };
 
 
+/** @brief Base instance for writing logs to some output. */
+class ILogWriter {
+ public:
+    /** Log message.
+    @param [in] msg - Message text. */
+    virtual void LogMessage(const std::string& msg) = 0;
+
+    /** Log level for stdout. */
+    LogLevel log_level_ = LogLevel::Silent;
+};
+
+
+/** @brief stdout-oriented log writer. */
+class StdoutLogWriter : public ILogWriter {
+ public:
+    /** @copydoc ILogWriter::Deserialize */
+    void LogMessage(const std::string& msg) override;
+};
+
+
+/** @brief File-oriented log writer. */
+class FileLogWriter : public ILogWriter {
+ public:
+    /** Constructor.
+    @param [in] file - Log filename. */
+    FileLogWriter(const std::string& filename);
+
+    /** Destructor. */
+    ~FileLogWriter();
+
+    /** @copydoc ILogWriter::Deserialize */
+    void LogMessage(const std::string& msg) override;
+
+ private:
+     /** File for log. */
+     std::ofstream log_file_;
+};
+
+
 /** @brief Class for logging messages.
 
 Provides logging messages to stdout and/or to file. */
 class Logger {
  public:
-    /** Default constructor. */
-    Logger();
-
-    /** Constructor.
-    @param [in] lvl_stdout - Log level for stdout. */
-    Logger(LogLevel lvl_stdout);
-
-    /** Constructor.
-    @param [in] lvl_file - Log level for file.
-    @param [in] file     - Log filename. */
-    Logger(LogLevel lvl_file, const std::string& file);
-
-    /** Constructor.
-    @param [in] lvl_stdout - Log level for stdout.
-    @param [in] lvl_file   - Log level for file.
-    @param [in] file       - Log filename. */
-    Logger(LogLevel lvl_stdout, LogLevel lvl_file, const std::string& file);
-
-    /** Destructor. */
-    ~Logger();
+    /** Add onemore log writter to process all logs. */
+    void AddLogWriter(ILogWriter* writer);
 
     /** Log that module started processing.
     @param [in] module - Module that started processing. */
@@ -71,7 +92,7 @@ class Logger {
     /** Log message to specified outputs that supports selected levels.
     @param [in] levels - Levels in which message must be logged.
     @param [in] msg    - Message text. */
-    void Log(const std::list<LogLevel>& levels, const std::string& msg);
+    virtual void Log(const std::list<LogLevel>& levels, const std::string& msg);
 
     /** Create text line inside pipeline node.
     @param [in] msg - Message text. */
@@ -81,12 +102,8 @@ class Logger {
     @param [in] msg - Message text. */
     static std::string CreateTitle(const std::string& msg);
 
-    /** Log level for stdout. */
-    LogLevel log_level_stdout_ = LogLevel::Standard;
-    /** Log level for file. */
-    LogLevel log_level_file_ = LogLevel::Silent;
-    /** File for log. */
-    std::ofstream log_file_;
+    /** Log writers storage. */
+    std::list<ILogWriter*> log_writers_;
     /** Last started module's time since Jan 1, 1970 in nanoseconds. */
     long long start_time_ns_ = 0;
 };

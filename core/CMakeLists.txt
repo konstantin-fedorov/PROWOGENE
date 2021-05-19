@@ -8,7 +8,6 @@ set (BASE_HEADERS
     logger.h
     module_interface.h
     settings_interface.h
-    storage.h
     types.h
 )
 

@@ -113,53 +113,32 @@ class Bmp {
     /** Size of rarely used BITMAPV5HEADER elements in the end of header. */
     static const int kBitmapV5HeaderRareFeaturesSize = 20;
 
-
-    /** Read 8 bit BMP file.
-    @param [out] data     - Output image.
-    @param [in] file_dump - Dumped to memory file.
-    @param [in] bfh       - File header.
-    @param [in] bih       - Info header. */
-    static void Read8BitColors(Image& data,
-                               const FileDump& file_dump,
-                               const BITMAPFILEHEADER& bfh,
-                               const BITMAPINFOHEADER& bih);
+    /** Read pixel palette for 8 bit image.
+    @param [in] file_dump        - Dumped to memory file.
+    @param [in] width            - Image width in pixels.
+    @param [in] height           - Image height in pixels.
+    @param [in] pixel_data_pos   - Position in file wherepixel data starts.
+    @param [in] info_header_size - Version of bitmap info header.
+    @return Image with filled data. */
+    template <int BIT_COUNT>
+    static Image ReadColors(const FileDump& file_dump,
+                            const int width,
+                            const int height,
+                            const int pixel_data_pos,
+                            const int info_header_size);
 
     /** Read pixel palette for 8 bit image.
     @param [in] file_dump - Dumped to memory file.
     @param [in] bih       - Info header.
     @return Pixel palette. */
     static std::vector<RgbaPixel> ReadPalette(const FileDump& file_dump,
-                                              const BITMAPINFOHEADER& bih);
+                                              const int info_header_size);
 
-    /** Read 24 bit BMP file.
-    @param [out] data     - Output image.
-    @param [in] file_dump - Dumped to memory file.
-    @param [in] bfh       - File header.
-    @param [in] bih       - Info header. */
-    static void Read24BitColors(Image& data,
-                                const FileDump& file_dump,
-                                const BITMAPFILEHEADER& bfh,
-                                const BITMAPINFOHEADER& bih);
-
-    /** Read 32 bit BMP file.
-    @param [out] data     - Output image.
-    @param [in] file_dump - Dumped to memory file.
-    @param [in] bfh       - File header.
-    @param [in] bih       - Info header. */
-    static void Read32BitColors(Image& data,
-                                const FileDump& file_dump,
-                                const BITMAPFILEHEADER& bfh,
-                                const BITMAPINFOHEADER& bih);
-
-    /** Save image to 24 bit BMP file.
+    /** Save image to BIT_COUNT bit BMP file. Only 24 and 32 are allowed.
     @param [in] file - Filename to save image.
     @param [in] data - Data for saving. */
-    static void Write24BitBmp(const std::string& file, const Image& data);
-
-    /** Save image to 32 bit BMP file.
-    @param [in] file - Filename to save image.
-    @param [in] data - Data for saving. */
-    static void Write32BitBmp(const std::string& file, const Image& data);
+    template <int BIT_COUNT>
+    static void WriteBmp(const std::string& filename, const Image& data);
 };
 
 } // namespace utils

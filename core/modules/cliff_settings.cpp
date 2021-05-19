@@ -34,15 +34,11 @@ string CliffSettings::GetName() const {
     return kConfigCliff;
 }
 
-bool CliffSettings::IsCorrect() const {
-    if (octaves < 1 ||
-            levels < 2 ||
-            seed < 0 ||
-            grain < 0.0f ||
-            grain > 1.0f) {
-        return false;
-    }
-    return true;
+void CliffSettings::Check() const {
+    CheckCondition(octaves > 0, "octaves is less than 1");
+    CheckCondition(levels > 1,  "levels is less than 2");
+    CheckCondition(seed >= 0,   "seed is less than 1");
+    CheckInRange(grain, 0.f, 1.f, "grain");
 }
 
 } // namespace modules

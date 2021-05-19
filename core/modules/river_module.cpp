@@ -38,15 +38,9 @@ void RiverModule::Deinit() {
     last_points_.clear();
 }
 
-void RiverModule::SetStorage(Storage* storage) {
-    LinkData(height_map_,    storage, kStorageHeightMap);
-    LinkData(river_mask_,    storage, kStorageRiverMask);
-    LinkData(sea_level_,     storage, kStorageSeaLevel);
-}
-
-bool RiverModule::Process() {
+void RiverModule::Process() {
     if (!settings_.river.count) {
-        return true;
+        return;
     }
 
     const int size = settings_.general.size;
@@ -58,7 +52,7 @@ bool RiverModule::Process() {
     ScanChunks();
     DetecLastPoints();
     if (!last_points_.size()) {
-        return true;
+        return;
     }
 
     Array2D<uint8_t> river_mask(size, size, 0);
@@ -70,23 +64,13 @@ bool RiverModule::Process() {
     const int threads = settings_.system.thread_count;
     AT::Smooth(*height_map_, std::max(2, radius), threads);
     AT::ToRange(*height_map_, 0.0f, 1.0f, threads);
-
-    return true;
-}
-
-std::list<std::string> RiverModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageRiverMask,
-        kStorageSeaLevel
-    };
 }
 
 list<string> RiverModule::GetNeededSettings() const {
     return {
-        kConfigGeneral,
-        kConfigRiver,
-        kConfigSystem
+        settings_.general.GetName(),
+        settings_.river.GetName(),
+        settings_.system.GetName()
     };
 }
 

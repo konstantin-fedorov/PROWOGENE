@@ -11,47 +11,15 @@ namespace utils {
 /** @brief Converter class for types. */
 class TypesConverter {
  public:
-    /** Convert align from string.
+    /** Convert enumeration from string.
     @param [in] str - String value for convertion. */
-    static Align      ToAlign(const std::string& str);
+    template <class T>
+    static T To(const std::string& str);
 
-    /** Convert distortion from string.
-    @param [in] str - String value for convertion. */
-    static Distortion ToDistortion(const std::string& str);
-
-    /** Convert gradient from string.
-    @param [in] str - String value for convertion. */
-    static Gradient   ToGradient(const std::string& str);
-
-    /** Convert key point from string.
-    @param [in] str - String value for convertion. */
-    static KeyPoint   ToKeyPoint(const std::string &str);
-
-    /** Convert surface from string.
-    @param [in] str - String value for convertion. */
-    static Surface    ToSurface(const std::string& str);
-
-
-    /** Convert string from align.
+    /** Convert string from enumeration.
     @param [in] val - Value for convertion. */
-    static std::string ToString(Align val);
-
-    /** Convert string from distortion.
-    @param [in] val - Value for convertion. */
-    static std::string ToString(Distortion val);
-
-    /** Convert string from gradient.
-    @param [in] val - Value for convertion. */
-    static std::string ToString(Gradient val);
-
-    /** Convert string from key point.
-    @param [in] val - Value for convertion. */
-    static std::string ToString(KeyPoint val);
-
-    /** Convert string from surface.
-    @param [in] val - Value for convertion. */
-    static std::string ToString(Surface val);
-
+    template <class T>
+    static std::string ToString(T val);
 
     /** Convert boime from int.
     @param [in] val - Value for convertion. */

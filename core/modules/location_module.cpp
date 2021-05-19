@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "utils/array2d_tools.h"
+#include "utils/random.h"
 
 namespace prowogene {
 namespace modules {
@@ -18,18 +19,9 @@ using utils::Random;
 using utils::RgbaPixel;
 using AT = utils::Array2DTools;
 
-void LocationModule::SetStorage(Storage* storage) {
-    LinkData(height_map_,   storage, kStorageHeightMap);
-    LinkData(river_mask_,   storage, kStorageRiverMask);
-    LinkData(location_map_, storage, kStorageLocationMap);
-    LinkData(sea_level_,    storage, kStorageSeaLevel);
-    LinkData(beach_level_,  storage, kStorageBeachLevel);
-    LinkData(image_io_,     storage, kStorageImageIO);
-}
-
-bool LocationModule::Process() {
+void LocationModule::Process() {
     if (!settings_.location.enabled) {
-        return true;
+        return;
     }
 
     const int size = settings_.general.size;
@@ -45,28 +37,15 @@ bool LocationModule::Process() {
     if (settings_.location.map_enable)  {
         SaveMap(settings_.names.location_map.c_str());
     }
-
-    return true;
-}
-
-list<string> LocationModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageRiverMask,
-        kStorageLocationMap,
-        kStorageSeaLevel,
-        kStorageBeachLevel,
-        kStorageImageIO
-    };
 }
 
 list<string> LocationModule::GetNeededSettings() const {
     return {
-        kConfigBasis,
-        kConfigGeneral,
-        kConfigLocation,
-        kConfigNames,
-        kConfigSystem
+        settings_.basis.GetName(),
+        settings_.general.GetName(),
+        settings_.location.GetName(),
+        settings_.names.GetName(),
+        settings_.system.GetName()
     };
 }
 

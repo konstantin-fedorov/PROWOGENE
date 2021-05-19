@@ -8,13 +8,7 @@ namespace modules {
 using utils::Array2D;
 using AT = utils::Array2DTools;
 
-void WaterModule::SetStorage(Storage* storage) {
-    LinkData(height_map_,  storage, kStorageHeightMap);
-    LinkData(sea_level_,   storage, kStorageSeaLevel);
-    LinkData(beach_level_, storage, kStorageBeachLevel);
-}
-
-bool WaterModule::Process() {
+void WaterModule::Process() {
     const float sea_ratio = settings_.water.sea.ratio;
     const int search_depth = settings_.system.search_depth;
     if (settings_.water.sea.enabled) {
@@ -35,22 +29,12 @@ bool WaterModule::Process() {
         AT::GetLevel(*beach_level_, *height_map_, sea_ratio + beach_ratio,
             search_depth);
     }
-
-    return true;
-}
-
-std::list<std::string> WaterModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageSeaLevel,
-        kStorageBeachLevel
-    };
 }
 
 std::list<std::string> WaterModule::GetNeededSettings() const {
     return {
-        kConfigSystem,
-        kConfigWater
+        settings_.system.GetName(),
+        settings_.water.GetName()
     };
 }
 

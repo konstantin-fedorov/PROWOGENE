@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <string>
+#include <functional>
 #include <thread>
 #include <tuple>
 #include <utility>
@@ -34,16 +35,7 @@ using TC = utils::TypesConverter;
 
 static const int kAlphaBandAccuracy = 4096;
 
-void TextureModule::SetStorage(Storage* storage) {
-    LinkData(height_map_,    storage, kStorageHeightMap);
-    LinkData(river_mask_,    storage, kStorageRiverMask);
-    LinkData(mountain_mask_, storage, kStorageMountainMask);
-    LinkData(sea_level_,     storage, kStorageSeaLevel);
-    LinkData(beach_level_,   storage, kStorageBeachLevel);
-    LinkData(image_io_,      storage, kStorageImageIO);
-}
-
-bool TextureModule::Process() {
+void TextureModule::Process() {
     const int size = settings_.general.size;
     const int chunk_size = settings_.general.chunk_size;
     const int chunks_count = size / chunk_size;
@@ -54,12 +46,17 @@ bool TextureModule::Process() {
 
     if (!settings_.texture.chunks_enabled &&
             !settings_.texture.minimap.enabled) {
-        return true;
+        return;
     }
-    if (!ReadReferenceTextures()) {
+    try {
+        ReadReferenceTextures();
+    }
+    catch (const LogicException& e) {
         if (!settings_.texture.gradient.enabled ||
                 settings_.texture.gradient.opacity < 1.0f - kEps) {
-            return false;
+            throw LogicException(std::string(e.what()) +
+                " Also gradient is not enabled or it's opacity is not 1.0." +
+                "Can't fill texture with colors.");
         }
     }
 
@@ -114,7 +111,6 @@ bool TextureModule::Process() {
             image_io_->Save(normal, params);
         }
     }
-    return true;
 }
 
 void TextureModule::Deinit() {
@@ -126,24 +122,13 @@ void TextureModule::Deinit() {
     minimap_.Clear();
 }
 
-std::list<std::string> TextureModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageRiverMask,
-        kStorageMountainMask,
-        kStorageSeaLevel,
-        kStorageBeachLevel,
-        kStorageImageIO
-    };
-}
-
 list<string> TextureModule::GetNeededSettings() const {
     return {
-        kConfigBasis,
-        kConfigGeneral,
-        kConfigNames,
-        kConfigSystem,
-        kConfigTexture
+        settings_.basis.GetName(),
+        settings_.general.GetName(),
+        settings_.names.GetName(),
+        settings_.system.GetName(),
+        settings_.texture.GetName()
     };
 }
 
@@ -159,7 +144,7 @@ std::string TextureModule::GetName() const {
     return "Texture";
 }
 
-bool TextureModule::ReadReferenceTextures() {
+void TextureModule::ReadReferenceTextures() {
     const int tile_size = settings_.texture.minimap.tile_size;
     const auto& img_bases = settings_.texture.images.bases;
     const auto& img_decals = settings_.texture.images.decals;
@@ -185,8 +170,7 @@ bool TextureModule::ReadReferenceTextures() {
 
         texture = image_io_->Load(std::get<1>(info[idx]));
         if (!texture.Size()) {
-            status_ = "Can't load image '" + std::get<1>(info[idx]) + "'.";
-            return false;
+            throw LogicException("Can't load image '" + std::get<1>(info[idx]) + "'.");
         }
 
         const auto& decal_list = std::get<2>(info[idx]);
@@ -197,8 +181,7 @@ bool TextureModule::ReadReferenceTextures() {
         for (int j = 0; j < decals_count; ++j) {
             decals[j] = image_io_->Load(decal_list[j]);
             if (!decals[j].Size()) {
-                status_ = "Can't load image '" + decal_list[j] + "'.";
-                return false;
+                throw LogicException("Can't load image '" + decal_list[j] + "'.");
             }
         }
 
@@ -229,7 +212,6 @@ bool TextureModule::ReadReferenceTextures() {
             }
         }
     }
-    return true;
 }
 
 void TextureModule::InitAlphaBands() {

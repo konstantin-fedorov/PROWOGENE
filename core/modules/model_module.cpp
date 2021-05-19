@@ -14,16 +14,11 @@ using utils::Vector3D;
 using utils::Range;
 using utils::VertexGroup;
 
-void ModelModule::SetStorage(Storage* storage) {
-    LinkData(height_map_, storage, kStorageHeightMap);
-    LinkData(model_io_,   storage, kStorageModelIO);
-}
-
-bool ModelModule::Process() {
+void ModelModule::Process() {
     const bool chunks_enabled = settings_.model.chunks_enabled;
     const bool complex_enabled = settings_.model.complex_enabled;
     if (!chunks_enabled && !complex_enabled) {
-        return true;
+        return;
     }
 
     const int size = settings_.general.size;
@@ -82,23 +77,15 @@ bool ModelModule::Process() {
             model_io_->Save(complex, params);
         }
     }
-    return true;
-}
-
-list<string> ModelModule::GetNeededData() const {
-    return {
-        kStorageHeightMap,
-        kStorageModelIO
-    };
 }
 
 list<string> ModelModule::GetNeededSettings() const {
     return {
-        kConfigGeneral,
-        kConfigModel,
-        kConfigNames,
-        kConfigSystem,
-        kConfigTexture
+        settings_.general.GetName(),
+        settings_.model.GetName(),
+        settings_.names.GetName(),
+        settings_.system.GetName(),
+        settings_.texture.GetName()
     };
 }
 

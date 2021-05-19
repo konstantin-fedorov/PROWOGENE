@@ -39,13 +39,10 @@ JsonObject WaterSettings::Serialize() const {
     return config;
 }
 
-bool WaterSettings::IsCorrect() const {
-    if (sea.ratio < 0.0f || sea.ratio > 1.0f ||
-            beach.ratio < 0.0f || beach.ratio > 1.0f ||
-            (beach.ratio + sea.ratio > 1.0f)) {
-        return false;
-    }
-    return true;
+void WaterSettings::Check() const {
+    CheckInRange(sea.ratio,               0.f, 1.f, "sea.ratio");
+    CheckInRange(beach.ratio,             0.f, 1.f, "beach.ratio");
+    CheckInRange(beach.ratio + sea.ratio, 0.f, 1.f, "beach.ratio + sea.ratio");
 }
 
 string WaterSettings::GetName() const {
