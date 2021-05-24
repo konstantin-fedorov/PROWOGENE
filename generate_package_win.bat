@@ -34,5 +34,7 @@ rmdir /s /q build
 rem out of win_x64
 cd ..
 
+echo d | xcopy /s ..\config config
+
 rem out of package
 cd ..
